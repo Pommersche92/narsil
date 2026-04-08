@@ -1,3 +1,24 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! CPU tab renderer.
+//!
+//! Shows a 60-second global CPU usage chart on the top half and a grid of
+//! per-core [`SplitGauge`] bars on the
+//! bottom half.
+
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -12,6 +33,7 @@ use crate::metrics::HISTORY_LEN;
 use crate::ui::helpers::usage_color;
 use crate::ui::widgets::SplitGauge;
 
+/// Renders the full CPU tab (history chart + per-core gauge grid) in `area`.
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let cpu_count = app.cpu.usages.len();
 
@@ -59,6 +81,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     }
 }
 
+/// Renders the 60-second global CPU usage history chart in `area`.
 pub fn draw_chart(frame: &mut Frame, app: &App, area: Rect) {
     let data: Vec<(f64, f64)> = app
         .cpu
@@ -102,6 +125,8 @@ pub fn draw_chart(frame: &mut Frame, app: &App, area: Rect) {
     frame.render_widget(chart, area);
 }
 
+/// Renders a single-row global CPU [`SplitGauge`]
+/// in `area`; used by the Overview tab.
 pub fn draw_gauge(frame: &mut Frame, app: &App, area: Rect) {
     let global_cpu = app.cpu.global_history.last().copied().unwrap_or(0.0);
     let gauge = SplitGauge::new(

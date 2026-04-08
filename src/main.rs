@@ -1,3 +1,23 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! Entry point for **narsil** — a terminal-based system resource monitor.
+//!
+//! Initialises the crossterm raw-mode terminal, runs the main event/tick loop,
+//! and restores the terminal on both normal exit and errors.
+
 mod app;
 mod metrics;
 mod ui;
@@ -17,6 +37,8 @@ use ratatui::{Terminal, backend::CrosstermBackend};
 
 use app::App;
 
+/// Initialises the terminal (raw mode, alternate screen, mouse capture),
+/// delegates to [`run_app`], and guarantees terminal restoration on exit.
 fn main() -> Result<()> {
     // Setup terminal
     enable_raw_mode()?;
@@ -43,6 +65,11 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Runs the main event/tick loop.
+///
+/// Draws the UI every frame, polls for crossterm [`Event`]s, dispatches
+/// keyboard input to update [`App`] state, and calls [`App::on_tick`] once
+/// per tick to refresh all metrics.
 fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
     let mut app = App::new();
     let mut last_tick = Instant::now();

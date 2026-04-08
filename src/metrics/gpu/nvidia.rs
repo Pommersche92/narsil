@@ -1,3 +1,23 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! NVIDIA GPU monitoring via NVML (enabled with the `nvidia` feature flag).
+//!
+//! Wraps [`nvml_wrapper`] to query device utilisation, VRAM, temperature and
+//! power draw for all detected NVIDIA GPUs.
+
 use nvml_wrapper::Nvml;
 
 use super::GpuEntry;
@@ -5,6 +25,12 @@ use crate::metrics::push_history;
 
 /// Refreshes GPU metrics using NVML.
 /// Returns `true` if at least one NVML device was found and updated.
+/// Updates `gpus` with data from all NVML-accessible NVIDIA GPUs.
+///
+/// Returns `true` when at least one device was found and updated, allowing
+/// the caller to skip the AMD sysfs fallback path.
+///
+/// The NVML handle is temporarily taken from `nvml` and restored afterwards.
 pub fn refresh(gpus: &mut Vec<GpuEntry>, nvml: &mut Option<Nvml>) -> bool {
     let nvml_handle = match nvml.take() {
         Some(n) => n,

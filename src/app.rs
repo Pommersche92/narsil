@@ -1,3 +1,23 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! Central application state.
+//!
+//! [`App`] owns every metric sub-state and delegates per-tick data refresh to
+//! the domain modules in [`crate::metrics`].
+
 use sysinfo::System;
 
 #[cfg(feature = "nvidia")]
@@ -9,24 +29,43 @@ use crate::metrics::{
     CpuState, DiskState, GpuEntry, MemState, NetState, ProcessEntry,
 };
 
+/// Central application state.
+///
+/// Owns all metric sub-states, the underlying [`sysinfo::System`] instance,
+/// and UI bookkeeping fields such as the active tab and scroll offsets.
 pub struct App {
+    /// The sysinfo system handle used for CPU, memory and process queries.
     pub sys: System,
+    /// CPU utilisation state (per-core usages and rolling history).
     pub cpu: CpuState,
+    /// RAM and swap utilisation state.
     pub mem: MemState,
+    /// Network throughput state (per-tick RX/TX deltas and rolling history).
     pub net: NetState,
+    /// Mounted filesystems with their disk usage.
     pub disks: Vec<DiskState>,
+    /// Top-100 processes sorted by CPU usage descending.
     pub processes: Vec<ProcessEntry>,
+    /// Detected GPU entries (AMD via sysfs or NVIDIA via NVML).
     pub gpus: Vec<GpuEntry>,
+    /// Tick interval in milliseconds (default: 1 000 ms / 1 Hz).
     pub tick_rate_ms: u64,
+    /// Index of the currently visible tab (0 = Overview … 6 = GPU).
     pub selected_tab: usize,
+    /// Scroll offset for the Processes tab.
     pub process_scroll: usize,
+    /// Scroll offset for the Disks tab.
     pub disk_scroll: usize,
+    /// Scroll offset for the GPU tab.
     pub gpu_scroll: usize,
     #[cfg(feature = "nvidia")]
+    /// Initialised NVML handle, or `None` if NVML is unavailable at runtime.
     pub(crate) nvml: Option<Nvml>,
 }
 
 impl App {
+    /// Creates a new [`App`], performs an initial full system refresh, and —
+    /// when the `nvidia` feature is enabled — attempts to initialise NVML.
     pub fn new() -> Self {
         let mut sys = System::new_all();
         sys.refresh_all();
@@ -51,6 +90,9 @@ impl App {
         }
     }
 
+    /// Refreshes all metric sub-states from live system data.
+    ///
+    /// Called by the event loop once per [`tick_rate_ms`][App::tick_rate_ms].
     pub fn on_tick(&mut self) {
         self.sys.refresh_all();
         cpu::refresh(&mut self.cpu, &self.sys);
@@ -61,6 +103,10 @@ impl App {
         self.refresh_gpus();
     }
 
+    /// Refreshes GPU data.
+    ///
+    /// Tries NVML first (when the `nvidia` feature is enabled); falls back to
+    /// the AMD sysfs driver if NVML finds no devices.
     fn refresh_gpus(&mut self) {
         #[cfg(feature = "nvidia")]
         {

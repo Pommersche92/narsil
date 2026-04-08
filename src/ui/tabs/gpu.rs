@@ -1,3 +1,24 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! GPU tab renderer.
+//!
+//! Renders one "card" per detected GPU containing utilisation and VRAM
+//! history charts, summary gauges, and a temperature/power stats row.
+//! Supports vertical scrolling for multi-GPU systems.
+
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -12,6 +33,10 @@ use crate::metrics::{GpuEntry, HISTORY_LEN};
 use crate::ui::helpers::{scroll_indicator, usage_color};
 use crate::ui::widgets::SplitGauge;
 
+/// Renders the GPU tab in `area`.
+///
+/// Displays a "no GPU detected" message when [`App::gpus`] is empty;
+/// otherwise renders one [`draw_card`] section per GPU with scrolling support.
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     const ITEM_H: u16 = 12;
 
@@ -60,6 +85,11 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     }
 }
 
+/// Renders the full card layout for a single [`GpuEntry`] in `area`.
+///
+/// Layout:
+/// - Top half: utilisation history chart (left) + VRAM history chart (right)
+/// - Bottom row: util gauge | VRAM gauge | temperature/power stats
 pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
     let block = Block::default()
         .title(format!(" {} ", gpu.name))

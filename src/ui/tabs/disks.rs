@@ -1,3 +1,24 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! Disk usage tab renderer.
+//!
+//! Renders one [`SplitGauge`] per mounted
+//! filesystem. Supports vertical scrolling when more disks are present than
+//! the visible area can fit.
+
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -8,6 +29,7 @@ use crate::app::App;
 use crate::ui::helpers::{scroll_indicator, usage_color_f64};
 use crate::ui::widgets::SplitGauge;
 
+/// Renders the Disks tab in `area`, with scrolling support.
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     const ITEM_H: u16 = 3;
 

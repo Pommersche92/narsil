@@ -1,3 +1,25 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! [`SplitGauge`] — a bar gauge with per-character label colour inversion.
+//!
+//! The label is drawn centred on the bar area. Characters inside the filled
+//! region use the bar colour as background with black foreground; characters
+//! outside use the bar colour as foreground on the default background.
+//! This keeps the percentage text legible at any fill level.
+
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -7,6 +29,10 @@ use ratatui::{
 
 /// A gauge that inverts the label colour character-by-character at the fill
 /// boundary so the percentage text is always readable regardless of fill level.
+/// A bar gauge that inverts the label colour at the fill boundary.
+///
+/// Construct with [`SplitGauge::new`] and optionally attach a titled border
+/// block with [`SplitGauge::block`] before passing to `frame.render_widget`.
 pub struct SplitGauge<'a> {
     block: Option<Block<'a>>,
     ratio: f64,
@@ -15,6 +41,11 @@ pub struct SplitGauge<'a> {
 }
 
 impl<'a> SplitGauge<'a> {
+    /// Creates a new [`SplitGauge`].
+    ///
+    /// - `ratio` — fill fraction in `[0.0, 1.0]` (clamped automatically).
+    /// - `bar_color` — colour used for both the filled bar and the label text.
+    /// - `label` — text centred on the bar (typically a percentage string).
     pub fn new(ratio: f64, bar_color: Color, label: impl Into<String>) -> Self {
         Self {
             block: None,
@@ -24,6 +55,7 @@ impl<'a> SplitGauge<'a> {
         }
     }
 
+    /// Wraps the gauge in a [`Block`] (border + optional title).
     pub fn block(mut self, block: Block<'a>) -> Self {
         self.block = Some(block);
         self

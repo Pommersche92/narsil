@@ -1,3 +1,23 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! Memory tab renderer.
+//!
+//! Shows a 60-second RAM usage chart on the top half, and RAM/swap
+//! [`SplitGauge`] bars on the bottom half.
+
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -12,6 +32,7 @@ use crate::metrics::HISTORY_LEN;
 use crate::ui::helpers::usage_color_f64;
 use crate::ui::widgets::SplitGauge;
 
+/// Renders the full Memory tab (history chart + RAM/swap gauges) in `area`.
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -105,6 +126,8 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     frame.render_widget(swap_gauge, gauge_chunks[1]);
 }
 
+/// Renders a single-row RAM [`SplitGauge`]
+/// in `area`; used by the Overview tab.
 pub fn draw_gauge(frame: &mut Frame, app: &App, area: Rect) {
     let pct = if app.mem.total > 0 {
         app.mem.used as f64 / app.mem.total as f64

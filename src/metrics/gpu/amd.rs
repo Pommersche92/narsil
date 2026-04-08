@@ -1,8 +1,31 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! AMD GPU monitoring via the Linux DRM/hwmon sysfs interfaces.
+//!
+//! Discovers `amdgpu`-managed cards under `/sys/class/drm`, reads utilisation,
+//! VRAM, temperature and power from the corresponding device files.
+
 use std::{fs, path::Path};
 
 use super::GpuEntry;
 use crate::metrics::push_history;
 
+/// Scans `/sys/class/drm` for `amdgpu`-managed cards, re-initialises the
+/// `gpus` list when the card count changes, and updates each entry with fresh
+/// GPU busy percent, VRAM usage, temperature, and power draw.
 pub fn refresh(gpus: &mut Vec<GpuEntry>) {
     let drm = Path::new("/sys/class/drm");
     if !drm.exists() {

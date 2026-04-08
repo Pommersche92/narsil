@@ -1,3 +1,23 @@
+// Copyright (C) 2026 Raimo Geisel
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+//! Network tab renderer.
+//!
+//! Shows a combined RX/TX history chart and the current throughput as text.
+//! Also exposes [`draw_sparklines`] for use by the Overview tab.
+
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -11,6 +31,7 @@ use crate::app::App;
 use crate::metrics::HISTORY_LEN;
 use crate::ui::helpers::format_bytes;
 
+/// Renders the full Network tab (combined history chart + throughput text) in `area`.
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -104,6 +125,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     frame.render_widget(text, chunks[1]);
 }
 
+/// Renders side-by-side RX and TX mini-charts in `area`; used by the Overview tab.
 pub fn draw_sparklines(frame: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
