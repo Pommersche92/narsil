@@ -1,8 +1,6 @@
-<div style="text-align: center;">
-  <p style="display: inline-flex; align-items: center; gap: 15px; font-size:60pt;">
-    <img src="icon.png" alt="narsil icon" width="128" />
-    Narsil
-  </p>
+<div align="center">
+  <img src="icon.png" alt="narsil icon" width="128" /><br><br>
+  <h1>Narsil</h1>
 </div>
 
 > A terminal-based system resource monitor written in Rust — fast, readable, and GPU-aware.
