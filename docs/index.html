@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Narsil — The Blade Reforged</title>
+  <meta name="description" content="narsil — A terminal-based system resource monitor for Linux. GPU-aware, Braille charts, per-character label inversion. Written in Rust." />
+  <link rel="canonical" href="https://pommersche92.github.io/narsil/" />
+  <meta property="og:title"       content="narsil — The Blade Reforged" />
+  <meta property="og:description" content="A terminal system monitor sharper than the tools that came before it." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://pommersche92.github.io/narsil/" />
+  <meta property="og:image"       content="https://pommersche92.github.io/narsil/assets/aragorn_narsil.png" />
+
+  <link rel="stylesheet" href="assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+
+<!-- ── Starfield canvas ─────────────────────────────────── -->
+<canvas id="cosmos"></canvas>
+
+<!-- ── Navigation ──────────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-brand">
+    <img src="assets/hero_image.png" width="30em" alt="Narsil">
+    narsil
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#gpu">GPU</a></li>
+    <li><a href="#comparison">Compare</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="https://github.com/Pommersche92/narsil" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="rune-ring rune-ring-1"></div>
+  <div class="rune-ring rune-ring-2"></div>
+
+  <!-- Aragorn with the flame of Anor — positioned right, glows over the starfield -->
+  <img class="hero-aragorn" src="assets/aragorn_narsil.png" alt="" aria-hidden="true" />
+
+  <p><img src="assets/hero_image.png" width="300em" alt="Narsil"></p>
+  <p class="hero-eyebrow">The Flame of the West · Reforged in Rust</p>
+
+  <h1 class="hero-title">narsil</h1>
+  <p class="hero-subtitle">A System Monitor Reforged</p>
+
+  <p class="hero-tagline">
+    Named after the blade shattered at the dawn of the Third Age<br>
+    and reforged for a king — <em>narsil</em> is sharper<br>
+    than the tools that came before it.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#install" class="btn-forge">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.5v4.793l2.146-2.147a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 01.708-.708L7.5 9.293V4.5a.5.5 0 011 0z"/></svg>
+      cargo install narsil
+    </a>
+    <a href="https://github.com/Pommersche92/narsil" class="btn-ghost" target="_blank" rel="noopener">
+      GitHub ↗
+    </a>
+    <a href="https://crates.io/crates/narsil" class="btn-ghost" target="_blank" rel="noopener">
+      crates.io ↗
+    </a>
+  </div>
+
+  <div class="hero-badges">
+    <span class="badge">🦀 Rust</span>
+    <span class="badge">ratatui</span>
+    <span class="badge">AMD + NVIDIA GPU</span>
+    <span class="badge">Linux</span>
+    <span class="badge">GPL-3.0</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════════════ -->
+<section id="features">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">What Narsil Sees</p>
+      <h2 class="s-title">Seven Views. One Kingdom.</h2>
+      <p class="s-desc">Every metric your system holds, rendered in Braille and flame — without ever leaving the terminal.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <!-- Unique highlight feature -->
+      <div class="feat-card hero-feat fade-in-up">
+        <span class="feat-icon">🎨</span>
+        <div>
+          <h3 class="feat-title">Split-Colour Gauge Inversion</h3>
+          <p class="feat-desc">Every percentage label inside a gauge automatically inverts its colour <strong>character-by-character</strong> at the fill boundary — so text is always readable, even when the bar sits at exactly 50%. No other terminal monitor does this.</p>
+          <span class="feat-tag">unique to narsil</span>
+        </div>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🗺️</span>
+        <h3 class="feat-title">Overview</h3>
+        <p class="feat-desc">CPU & RAM gauges, live RX/TX sparklines, and a process list that fills every available line of your terminal.</p>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🧠</span>
+        <h3 class="feat-title">CPU</h3>
+        <p class="feat-desc">Global usage history rendered in Braille dot art, followed by per-core gauges colour-coded by load intensity.</p>
+        <span class="feat-tag">Braille charts</span>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">💾</span>
+        <h3 class="feat-title">Memory</h3>
+        <p class="feat-desc">RAM and Swap history charts with live GiB usage gauges. See exactly how much of your kingdom's silver remains.</p>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🌐</span>
+        <h3 class="feat-title">Network</h3>
+        <p class="feat-desc">Combined RX/TX history chart alongside live per-direction throughput — every packet a message from the realm.</p>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">💿</span>
+        <h3 class="feat-title">Disks</h3>
+        <p class="feat-desc">Per-partition usage bars at fixed height, with ▲ ▼ scroll indicators when your vaults exceed the visible height.</p>
+        <span class="feat-tag">scrollable</span>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🔬</span>
+        <h3 class="feat-title">Processes</h3>
+        <p class="feat-desc">Process table sorted by CPU usage — the lords of the realm and their burdens, always filling the visible height.</p>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🎮</span>
+        <h3 class="feat-title">GPU</h3>
+        <p class="feat-desc">Per-GPU cards with utilisation and VRAM history charts, live gauges, temperature, and power draw. AMD and NVIDIA fully supported.</p>
+        <span class="feat-tag">AMD ✓&nbsp;&nbsp;NVIDIA ✓</span>
+      </div>
+
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">⚡</span>
+        <h3 class="feat-title">Zero Busy-Wait</h3>
+        <p class="feat-desc">A 1-second tick loop drives all rendering. Key events are processed between ticks with zero busy-waiting — swift and silent as a ranger.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<div class="container">
+  <div class="divider fade-in-up"><span class="divider-rune">✦ ᚾ ✦</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     INSTALL
+══════════════════════════════════════════════════════ -->
+<section id="install">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">Forge Your Blade</p>
+      <h2 class="s-title">Installation</h2>
+      <p class="s-desc">Requires Rust ≥ 1.85 and a Linux system with standard <code>/sys</code> and <code>/proc</code> mounts.</p>
+    </div>
+
+    <div class="install-wrap fade-in-up">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('crates', this)">From crates.io</button>
+        <button class="tab-btn"        onclick="switchTab('source', this)">From source</button>
+        <button class="tab-btn"        onclick="switchTab('nvidia', this)">NVIDIA support</button>
+      </div>
+
+      <!-- crates.io -->
+      <div class="tab-panel active" id="tab-crates">
+        <p class="tab-intro">The quickest path. Cargo fetches, compiles with full optimisations, and installs the binary.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, 'cargo install narsil')">copy</button>
+          <div class="code-block">
+<span class="c-cmd">cargo</span> <span class="c-arg">install</span> <span class="c-string">narsil</span>
+          </div>
+        </div>
+        <div class="install-note">
+          This places the binary in <code>~/.cargo/bin/</code>. Make sure that directory is on your <code>$PATH</code>.
+        </div>
+      </div>
+
+      <!-- source -->
+      <div class="tab-panel" id="tab-source">
+        <p class="tab-intro">Clone and build locally — ideal for development or inspecting the forge.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/Pommersche92/narsil\ncd narsil\ncargo run --release')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># Clone the repository</span>
+<span class="c-cmd">git</span> <span class="c-arg">clone</span> <span class="c-string">https://github.com/Pommersche92/narsil</span>
+<span class="c-cmd">cd</span> <span class="c-arg">narsil</span>
+
+<span class="c-comment"># Build in release mode and run</span>
+<span class="c-cmd">cargo</span> <span class="c-arg">run</span> <span class="c-flag">--release</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- nvidia -->
+      <div class="tab-panel" id="tab-nvidia">
+        <p class="tab-intro">Enable NVIDIA GPU monitoring via NVML. Requires proprietary NVIDIA drivers installed at link time.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, 'cargo install narsil --features nvidia')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># From crates.io with NVIDIA support</span>
+<span class="c-cmd">cargo</span> <span class="c-arg">install</span> <span class="c-string">narsil</span> <span class="c-flag">--features</span> <span class="c-arg">nvidia</span>
+
+<span class="c-comment"># Or from source</span>
+<span class="c-cmd">cargo</span> <span class="c-arg">build</span> <span class="c-flag">--release --features</span> <span class="c-arg">nvidia</span>
+          </div>
+        </div>
+        <div class="install-note">
+          The <code>nvidia</code> feature links against <code>libnvidia-ml.so</code>. If the NVML library is absent at link time, the build fails — this is by design.
+        </div>
+      </div>
+    </div><!-- /.install-wrap -->
+
+  </div>
+</section>
+
+
+<div class="container">
+  <div class="divider fade-in-up"><span class="divider-rune">✦ ᛊ ✦</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     GPU
+══════════════════════════════════════════════════════ -->
+<section id="gpu">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">The Stewards of Silicon</p>
+      <h2 class="s-title">GPU Support</h2>
+      <p class="s-desc">narsil reads deep into the kernel's sysfs and NVML to bring you real GPU metrics — not guesses.</p>
+    </div>
+
+    <div class="gpu-grid">
+
+      <div class="gpu-card ok fade-in-up">
+        <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD Discrete"></div>
+        <div class="gpu-name">AMD Discrete</div>
+        <div class="gpu-driver">amdgpu kernel driver</div>
+        <div class="chips">
+          <span class="chip ok">Utilisation</span>
+          <span class="chip ok">VRAM</span>
+          <span class="chip ok">Temperature</span>
+          <span class="chip ok">Power</span>
+        </div>
+        <span class="gpu-label ok">Fully Supported</span>
+      </div>
+
+      <div class="gpu-card warn fade-in-up">
+        <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD APU / iGPU"></div>
+        <div class="gpu-name">AMD APU / iGPU</div>
+        <div class="gpu-driver">amdgpu kernel driver</div>
+        <div class="chips">
+          <span class="chip ok">Utilisation</span>
+          <span class="chip warn">GTT Memory</span>
+          <span class="chip ok">Temperature</span>
+          <span class="chip ok">Power</span>
+        </div>
+        <span class="gpu-label warn">Supported (GTT)</span>
+      </div>
+
+      <div class="gpu-card ok fade-in-up">
+        <div class="gpu-vendor"><img src="assets/nvidia-48.png" alt="NVIDIA"></div>
+        <div class="gpu-name">NVIDIA</div>
+        <div class="gpu-driver">proprietary + --features nvidia</div>
+        <div class="chips">
+          <span class="chip ok">Utilisation</span>
+          <span class="chip ok">VRAM</span>
+          <span class="chip ok">Temperature</span>
+          <span class="chip ok">Power</span>
+        </div>
+        <span class="gpu-label ok">Fully Supported</span>
+      </div>
+
+      <div class="gpu-card dim fade-in-up">
+        <div class="gpu-vendor"><img src="assets/intel-48.png" alt="Intel iGPU / Arc"></div>
+        <div class="gpu-name">Intel iGPU / Arc</div>
+        <div class="gpu-driver">i915 / xe kernel driver</div>
+        <div class="chips">
+          <span class="chip none">Utilisation</span>
+          <span class="chip none">Memory</span>
+          <span class="chip none">Temperature</span>
+          <span class="chip none">Power</span>
+        </div>
+        <span class="gpu-label dim">Planned</span>
+      </div>
+
+    </div>
+
+    <p class="gpu-footnote fade-in-up">
+      AMD APU VRAM values reflect GTT — system RAM dynamically shared with the GPU. The numbers are accurate; dedicated-vs-shared label disambiguation is planned.
+    </p>
+
+  </div>
+</section>
+
+
+<div class="container">
+  <div class="divider fade-in-up"><span class="divider-rune">✦ ᛏ ✦</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     KEYBINDINGS
+══════════════════════════════════════════════════════ -->
+<section id="keybindings">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">Command the Blade</p>
+      <h2 class="s-title">Keybindings</h2>
+    </div>
+
+    <div class="keys-grid fade-in-up">
+      <div class="key-row"><kbd>Tab</kbd>         <span class="key-desc">Next tab (wraps around)</span></div>
+      <div class="key-row"><kbd>Shift+Tab</kbd>   <span class="key-desc">Previous tab</span></div>
+      <div class="key-row"><kbd>1</kbd>–<kbd>7</kbd> <span class="key-desc">Jump directly to tab</span></div>
+      <div class="key-row"><kbd>→</kbd> / <kbd>l</kbd> <span class="key-desc">Next tab</span></div>
+      <div class="key-row"><kbd>←</kbd> / <kbd>h</kbd> <span class="key-desc">Previous tab</span></div>
+      <div class="key-row"><kbd>↓</kbd> / <kbd>j</kbd> <span class="key-desc">Scroll down</span></div>
+      <div class="key-row"><kbd>↑</kbd> / <kbd>k</kbd> <span class="key-desc">Scroll up</span></div>
+      <div class="key-row"><kbd>q</kbd> / <kbd>Ctrl‑C</kbd> <span class="key-desc">Quit</span></div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="container">
+  <div class="divider fade-in-up"><span class="divider-rune">✦ ᚨ ✦</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     COMPARISON
+══════════════════════════════════════════════════════ -->
+<section id="comparison">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">Measured Against Heroes of Old</p>
+      <h2 class="s-title">How does it compare?</h2>
+      <p class="s-desc">The blades that came before, and what sets narsil apart.</p>
+    </div>
+
+    <div class="table-scroll fade-in-up">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th><code>top</code></th>
+            <th><code>htop</code></th>
+            <th><code>gotop</code></th>
+            <th>⚔️ narsil</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Language</td>
+            <td>C</td><td>C</td><td>Go</td>
+            <td>🦀 Rust</td>
+          </tr>
+          <tr>
+            <td>GPU metrics</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="part">partial</td>
+            <td class="chk">AMD + NVIDIA</td>
+          </tr>
+          <tr>
+            <td>Braille charts</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="chk">✓</td>
+            <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Per-char label inversion</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Disk usage bars</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="chk">✓</td>
+            <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Scroll indicators</td>
+            <td class="crss">✗</td><td class="chk">✓</td><td class="crss">✗</td>
+            <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Keybinding status bar</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Log tail panel</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="part">planned</td>
+          </tr>
+          <tr>
+            <td>Alert rules</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="part">planned</td>
+          </tr>
+          <tr>
+            <td>Remote / SSH mode</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="part">planned</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="container">
+  <div class="divider fade-in-up"><span class="divider-rune">✦ ᛚ ✦</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     ROADMAP
+══════════════════════════════════════════════════════ -->
+<section id="roadmap">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">What the Palantír Foretells</p>
+      <h2 class="s-title">Roadmap</h2>
+    </div>
+
+    <div class="roadmap-grid">
+
+      <div class="rm-col fade-in-up">
+        <h3>🔜 Near-term</h3>
+        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🔵 Intel GPU support via i915 / xe sysfs and hwmon</div></div>
+        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🏷️ AMD APU label fix — distinguish GTT from dedicated VRAM</div></div>
+        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">⏱️ Configurable refresh rate via <code>--interval &lt;ms&gt;</code></div></div>
+        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🎨 Built-in colour themes — dark, light, high-contrast</div></div>
+      </div>
+
+      <div class="rm-col fade-in-up">
+        <h3>🔧 Medium-term</h3>
+        <div class="rm-item"><div class="rm-dot mid"></div><div class="rm-text">🔬 Per-process GPU attribution via NVML or DRM fdinfo</div></div>
+        <div class="rm-item"><div class="rm-dot mid"></div><div class="rm-text">🌡️ Temperature history sparklines for CPU and GPU</div></div>
+        <div class="rm-item"><div class="rm-dot mid"></div><div class="rm-text">💨 Fan speed display in GPU card view</div></div>
+        <div class="rm-item"><div class="rm-dot mid"></div><div class="rm-text">💽 Disk I/O throughput — read/write MB/s per device</div></div>
+        <div class="rm-item"><div class="rm-dot mid"></div><div class="rm-text">🔋 Battery & power panel for laptops</div></div>
+      </div>
+
+      <div class="rm-col fade-in-up">
+        <h3>🚀 Long-term</h3>
+        <div class="rm-item"><div class="rm-dot far"></div><div class="rm-text">📋 Log tail panel with regex highlight rules</div></div>
+        <div class="rm-item"><div class="rm-dot far"></div><div class="rm-text">🚨 Alert rules with desktop / webhook notifications</div></div>
+        <div class="rm-item"><div class="rm-dot far"></div><div class="rm-text">🖥️ SSH remote mode — monitor a remote host locally</div></div>
+        <div class="rm-item"><div class="rm-dot far"></div><div class="rm-text">📼 Session recording &amp; replay for post-mortem analysis</div></div>
+        <div class="rm-item"><div class="rm-dot far"></div><div class="rm-text">📊 <code>--json</code> / <code>--prometheus</code> export for Grafana</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer>
+  <p class="footer-quote">"All that is gold does not glitter,<br>not all those who wander are lost."</p>
+  <p class="footer-attr">— J.R.R. Tolkien, The Fellowship of the Ring</p>
+
+  <div class="footer-links">
+    <a href="https://github.com/Pommersche92/narsil" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://crates.io/crates/narsil" target="_blank" rel="noopener">crates.io</a>
+    <a href="https://docs.rs/narsil" target="_blank" rel="noopener">docs.rs</a>
+    <a href="https://github.com/Pommersche92/narsil/blob/main/LICENSE">GPL-3.0 License</a>
+  </div>
+
+  <p class="footer-copy">narsil · written in Rust · named after the shards of a broken blade</p>
+
+  <details class="impressum">
+    <summary><span class="impressum-arrow">▶</span> Impressum (Angaben gemäß § 5 TMG)</summary>
+    <div class="impressum-body">
+      <div class="impressum-col">
+        <h4>Angaben gemäß § 5 TMG</h4>
+        <p>Raimo Geisel<br>Uhlandstraße 15<br>75385 Bad Teinach</p>
+      </div>
+      <div class="impressum-col">
+        <h4>Kontakt</h4>
+        <p>E-Mail: <a href="mailto:raimog92@protonmail.com">raimog92@protonmail.com</a></p>
+      </div>
+      <div class="impressum-col">
+        <h4>Streitschlichtung</h4>
+        <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+        <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.<br><br>
+        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+        Verbraucherschlichtungsstelle teilzunehmen.</p>
+      </div>
+    </div>
+  </details>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════
+     DSGVO BANNER
+══════════════════════════════════════════════════════ -->
+<div id="dsgvo-banner" role="dialog" aria-live="polite" aria-label="Datenschutzhinweis" hidden>
+  <div class="dsgvo-inner">
+    <p class="dsgvo-text">
+      Diese Seite verwendet <strong>keine Cookies</strong> und kein Tracking.
+      Sie wird auf GitHub&nbsp;Pages gehostet — GitHub&nbsp;Inc. kann dabei
+      IP-Adressen in Server-Logs erfassen (vgl.
+      <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#data-collection" target="_blank" rel="noopener">GitHub&nbsp;Privacy</a>).
+      Weitere Angaben im
+      <a href="#" onclick="document.querySelector('.impressum').open=true; document.querySelector('.impressum').scrollIntoView({behavior:'smooth'}); return false;">Impressum</a>.
+    </p>
+    <button class="dsgvo-btn" id="dsgvo-accept">Verstanden</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════ -->
+<script src="site.js"></script>
+
+</body>
+</html>
