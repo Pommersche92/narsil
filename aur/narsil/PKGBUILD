@@ -11,7 +11,7 @@ makedepends=('cargo')
 provides=('narsil')
 conflicts=('narsil-bin')
 source=("$pkgname-$pkgver.tar.gz::https://static.crates.io/crates/$pkgname/$pkgname-$pkgver.crate")
-sha256sums=('SKIP')
+sha256sums=('59aa41fd6fbedda475b0e8405b73c7145726ae925cd909635efa17356e07bf6d')
 
 prepare() {
     cd "$pkgname-$pkgver"
