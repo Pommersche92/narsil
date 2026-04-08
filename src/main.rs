@@ -22,6 +22,9 @@ mod app;
 mod metrics;
 mod ui;
 
+#[cfg(test)]
+mod tests;
+
 use std::{
     io,
     time::{Duration, Instant},
@@ -36,6 +39,12 @@ use crossterm::{
 use ratatui::{Terminal, backend::CrosstermBackend};
 
 use app::App;
+
+/// Number of tabs: 7 on Linux (includes GPU), 6 on other platforms.
+#[cfg(target_os = "linux")]
+const TAB_COUNT: usize = 7;
+#[cfg(not(target_os = "linux"))]
+const TAB_COUNT: usize = 6;
 
 /// Initialises the terminal (raw mode, alternate screen, mouse capture),
 /// delegates to [`run_app`], and guarantees terminal restoration on exit.
@@ -89,10 +98,10 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
                         return Ok(());
                     }
                     (KeyCode::Tab, _) | (KeyCode::Right, _) | (KeyCode::Char('l'), _) => {
-                        app.selected_tab = (app.selected_tab + 1) % 7;
+                        app.selected_tab = (app.selected_tab + 1) % TAB_COUNT;
                     }
                     (KeyCode::BackTab, _) | (KeyCode::Left, _) | (KeyCode::Char('h'), _) => {
-                        app.selected_tab = (app.selected_tab + 6) % 7;
+                        app.selected_tab = (app.selected_tab + TAB_COUNT - 1) % TAB_COUNT;
                     }
                     (KeyCode::Down, _) | (KeyCode::Char('j'), _) => {
                         match app.selected_tab {
@@ -104,6 +113,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
                                 app.process_scroll = (app.process_scroll + 1)
                                     .min(app.processes.len().saturating_sub(1));
                             }
+                            #[cfg(target_os = "linux")]
                             6 => {
                                 app.gpu_scroll = (app.gpu_scroll + 1)
                                     .min(app.gpus.len().saturating_sub(1));
@@ -119,6 +129,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
                             5 => {
                                 app.process_scroll = app.process_scroll.saturating_sub(1);
                             }
+                            #[cfg(target_os = "linux")]
                             6 => {
                                 app.gpu_scroll = app.gpu_scroll.saturating_sub(1);
                             }
@@ -131,6 +142,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
                     (KeyCode::Char('4'), _) => app.selected_tab = 3,
                     (KeyCode::Char('5'), _) => app.selected_tab = 4,
                     (KeyCode::Char('6'), _) => app.selected_tab = 5,
+                    #[cfg(target_os = "linux")]
                     (KeyCode::Char('7'), _) => app.selected_tab = 6,
                     _ => {}
                 }

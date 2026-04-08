@@ -41,11 +41,18 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let mut bindings: Vec<(&str, &str)> = vec![
         ("Tab / → / l", "Navigate tabs right"),
         ("Shift+Tab / ← / h", "Navigate tabs left"),
+        #[cfg(target_os = "linux")]
         ("1-7", "Jump to tab"),
+        #[cfg(not(target_os = "linux"))]
+        ("1-6", "Jump to tab"),
         ("q / Ctrl-C", "Quit"),
     ];
 
-    if matches!(app.selected_tab, 4 | 5 | 6) {
+    #[cfg(target_os = "linux")]
+    let scrollable_tab = matches!(app.selected_tab, 4 | 5 | 6);
+    #[cfg(not(target_os = "linux"))]
+    let scrollable_tab = matches!(app.selected_tab, 4 | 5);
+    if scrollable_tab {
         bindings.extend_from_slice(&[("↑ / k", "Scroll up"), ("↓ / j", "Scroll down")]);
     }
 

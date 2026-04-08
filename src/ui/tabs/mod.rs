@@ -17,6 +17,7 @@
 
 pub mod cpu;
 pub mod disks;
+#[cfg(target_os = "linux")]
 pub mod gpu;
 pub mod memory;
 pub mod network;

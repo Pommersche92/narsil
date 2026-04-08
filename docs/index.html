@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Narsil — The Blade Reforged</title>
-  <meta name="description" content="narsil — A terminal-based system resource monitor for Linux. GPU-aware, Braille charts, per-character label inversion. Written in Rust." />
+  <meta name="description" content="narsil — A terminal-based system resource monitor for Linux, Windows and macOS. GPU-aware (Linux), Braille charts, per-character label inversion. Written in Rust." />
   <link rel="canonical" href="https://pommersche92.github.io/narsil/" />
   <meta property="og:title"       content="narsil — The Blade Reforged" />
   <meta property="og:description" content="A terminal system monitor sharper than the tools that came before it." />
@@ -74,8 +74,8 @@
   <div class="hero-badges">
     <span class="badge">🦀 Rust</span>
     <span class="badge">ratatui</span>
-    <span class="badge">AMD + NVIDIA GPU</span>
-    <span class="badge">Linux</span>
+    <span class="badge">AMD + NVIDIA GPU (Linux)</span>
+    <span class="badge">Linux &middot; Windows &middot; macOS</span>
     <span class="badge">GPL-3.0</span>
   </div>
 </section>
@@ -90,7 +90,7 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">What Narsil Sees</p>
       <h2 class="s-title">Seven Views. One Kingdom.</h2>
-      <p class="s-desc">Every metric your system holds, rendered in Braille and flame — without ever leaving the terminal.</p>
+      <p class="s-desc">Every metric your system holds, rendered in Braille and flame — without ever leaving the terminal. Runs on Linux, Windows and macOS. GPU monitoring is Linux-only for now.</p>
     </div>
 
     <div class="features-grid">
@@ -145,8 +145,8 @@
 
       <div class="feat-card fade-in-up">
         <span class="feat-icon">🎮</span>
-        <h3 class="feat-title">GPU</h3>
-        <p class="feat-desc">Per-GPU cards with utilisation and VRAM history charts, live gauges, temperature, and power draw. AMD and NVIDIA fully supported.</p>
+        <h3 class="feat-title">GPU <span style="font-size:.7em;opacity:.7">(Linux)</span></h3>
+        <p class="feat-desc">Per-GPU cards with utilisation and VRAM history charts, live gauges, temperature, and power draw. AMD and NVIDIA fully supported. GPU monitoring requires Linux with the <code>amdgpu</code> or NVIDIA proprietary driver.</p>
         <span class="feat-tag">AMD ✓&nbsp;&nbsp;NVIDIA ✓</span>
       </div>
 
@@ -175,14 +175,14 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">Forge Your Blade</p>
       <h2 class="s-title">Installation</h2>
-      <p class="s-desc">Requires Rust ≥ 1.85 and a Linux system with standard <code>/sys</code> and <code>/proc</code> mounts.</p>
+      <p class="s-desc">Requires Rust ≥ 1.85. Runs on <strong>Linux</strong>, <strong>Windows 10+</strong>, and <strong>macOS 12+</strong>. GPU support requires Linux with standard <code>/sys</code> mounts.</p>
     </div>
 
     <div class="install-wrap fade-in-up">
       <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('crates', this)">From crates.io</button>
         <button class="tab-btn"        onclick="switchTab('source', this)">From source</button>
-        <button class="tab-btn"        onclick="switchTab('nvidia', this)">NVIDIA support</button>
+        <button class="tab-btn"        onclick="switchTab('nvidia', this)">NVIDIA support (Linux)</button>
       </div>
 
       <!-- crates.io -->
@@ -252,7 +252,7 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">The Stewards of Silicon</p>
       <h2 class="s-title">GPU Support</h2>
-      <p class="s-desc">narsil reads deep into the kernel's sysfs and NVML to bring you real GPU metrics — not guesses.</p>
+      <p class="s-desc">GPU monitoring is <strong>Linux-only</strong> — narsil reads deep into the kernel’s sysfs and NVML to bring you real GPU metrics. On Windows and macOS the GPU tab is not compiled in; all other tabs work normally.</p>
     </div>
 
     <div class="gpu-grid">
@@ -338,7 +338,8 @@
     <div class="keys-grid fade-in-up">
       <div class="key-row"><kbd>Tab</kbd>         <span class="key-desc">Next tab (wraps around)</span></div>
       <div class="key-row"><kbd>Shift+Tab</kbd>   <span class="key-desc">Previous tab</span></div>
-      <div class="key-row"><kbd>1</kbd>–<kbd>7</kbd> <span class="key-desc">Jump directly to tab</span></div>
+      <div class="key-row"><kbd>1</kbd>–<kbd>6</kbd> <span class="key-desc">Jump directly to tab (all platforms)</span></div>
+      <div class="key-row"><kbd>7</kbd> <span class="key-desc">Jump to GPU tab (Linux only)</span></div>
       <div class="key-row"><kbd>→</kbd> / <kbd>l</kbd> <span class="key-desc">Next tab</span></div>
       <div class="key-row"><kbd>←</kbd> / <kbd>h</kbd> <span class="key-desc">Previous tab</span></div>
       <div class="key-row"><kbd>↓</kbd> / <kbd>j</kbd> <span class="key-desc">Scroll down</span></div>
@@ -387,7 +388,7 @@
           <tr>
             <td>GPU metrics</td>
             <td class="crss">✗</td><td class="crss">✗</td><td class="part">partial</td>
-            <td class="chk">AMD + NVIDIA</td>
+            <td class="chk">AMD + NVIDIA (Linux)</td>
           </tr>
           <tr>
             <td>Braille charts</td>

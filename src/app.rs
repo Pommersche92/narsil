@@ -20,14 +20,15 @@
 
 use sysinfo::System;
 
-#[cfg(feature = "nvidia")]
+#[cfg(all(target_os = "linux", feature = "nvidia"))]
 use nvml_wrapper::Nvml;
 
 use crate::metrics::{
     cpu, disks, memory, network, processes,
-    gpu as gpu_metrics,
-    CpuState, DiskState, GpuEntry, MemState, NetState, ProcessEntry,
+    CpuState, DiskState, MemState, NetState, ProcessEntry,
 };
+#[cfg(target_os = "linux")]
+use crate::metrics::{gpu as gpu_metrics, GpuEntry};
 
 /// Central application state.
 ///
@@ -47,6 +48,7 @@ pub struct App {
     /// Top-100 processes sorted by CPU usage descending.
     pub processes: Vec<ProcessEntry>,
     /// Detected GPU entries (AMD via sysfs or NVIDIA via NVML).
+    #[cfg(target_os = "linux")]
     pub gpus: Vec<GpuEntry>,
     /// Tick interval in milliseconds (default: 1 000 ms / 1 Hz).
     pub tick_rate_ms: u64,
@@ -57,9 +59,10 @@ pub struct App {
     /// Scroll offset for the Disks tab.
     pub disk_scroll: usize,
     /// Scroll offset for the GPU tab.
+    #[cfg(target_os = "linux")]
     pub gpu_scroll: usize,
-    #[cfg(feature = "nvidia")]
     /// Initialised NVML handle, or `None` if NVML is unavailable at runtime.
+    #[cfg(all(target_os = "linux", feature = "nvidia"))]
     pub(crate) nvml: Option<Nvml>,
 }
 
@@ -78,14 +81,16 @@ impl App {
             net: NetState::new(),
             disks: Vec::new(),
             processes: Vec::new(),
+            #[cfg(target_os = "linux")]
             gpus: Vec::new(),
             sys,
             tick_rate_ms: 1000,
             selected_tab: 0,
             process_scroll: 0,
             disk_scroll: 0,
+            #[cfg(target_os = "linux")]
             gpu_scroll: 0,
-            #[cfg(feature = "nvidia")]
+            #[cfg(all(target_os = "linux", feature = "nvidia"))]
             nvml: Nvml::init().ok(),
         }
     }
@@ -100,6 +105,7 @@ impl App {
         network::refresh(&mut self.net);
         disks::refresh(&mut self.disks);
         processes::refresh(&mut self.processes, &self.sys);
+        #[cfg(target_os = "linux")]
         self.refresh_gpus();
     }
 
@@ -107,6 +113,7 @@ impl App {
     ///
     /// Tries NVML first (when the `nvidia` feature is enabled); falls back to
     /// the AMD sysfs driver if NVML finds no devices.
+    #[cfg(target_os = "linux")]
     fn refresh_gpus(&mut self) {
         #[cfg(feature = "nvidia")]
         {

@@ -9,6 +9,8 @@
 
 Named after the reforged sword of Aragorn, **narsil** is built to be sharper than the tools that came before it. It targets developers and power users who live in the terminal and need real-time system insight without leaving it.
 
+> **Platform support** — narsil runs on **Linux**, **Windows**, and **macOS**. The GPU tab (AMD/NVIDIA) is Linux-only for now; all other tabs work on every supported OS.
+
 ---
 
 ## 📸 Screenshot
@@ -21,15 +23,15 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 
 ### Current scope (v0.1)
 
-| Tab | What you see |
-|-----|-------------|
-| 🗺️ **Overview** | CPU gauge, RAM gauge, live RX/TX sparklines, top processes (fills available height) |
-| 🧠 **CPU** | Global usage history chart (Braille), per-core gauges with colour-coded load |
-| 💾 **Memory** | RAM + Swap history charts, GiB usage gauges |
-| 🌐 **Network** | Combined RX/TX history chart, per-direction current throughput |
-| 💿 **Disks** | Per-partition usage bars at fixed height, scrollable when partitions exceed the terminal |
-| 🔬 **Processes** | Process table sorted by CPU, scrollable, fills available height |
-| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw |
+| Tab | What you see | Platform |
+|-----|-------------|----------|
+| 🗺️ **Overview** | CPU gauge, RAM gauge, live RX/TX sparklines, top processes (fills available height) | all |
+| 🧠 **CPU** | Global usage history chart (Braille), per-core gauges with colour-coded load | all |
+| 💾 **Memory** | RAM + Swap history charts, GiB usage gauges | all |
+| 🌐 **Network** | Combined RX/TX history chart, per-direction current throughput | all |
+| 💿 **Disks** | Per-partition usage bars at fixed height, scrollable when partitions exceed the terminal | all |
+| 🔬 **Processes** | Process table sorted by CPU, scrollable, fills available height | all |
+| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw | **Linux only** |
 
 ### 🔑 Key behaviours
 
@@ -37,7 +39,7 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 - 📜 **Scroll indicators** — any panel that cannot display all items at once shows `▲`/`▼`/`▲▼` in its title.
 - 📐 **Dynamic sizing** — all panels adapt to the current terminal dimensions; no hard-coded row counts.
 - ⚡ **1-second refresh** driven by a tick loop; key events are processed between ticks with zero busy-waiting.
-- ⌨️ **Keyboard-first navigation**: `Tab` / `Shift+Tab` wrap-around tab switching; `1`–`7` direct jump; `j`/`k` or arrow keys for scrolling; `q` or `Ctrl-C` to quit.
+- ⌨️ **Keyboard-first navigation**: `Tab` / `Shift+Tab` wrap-around tab switching; `1`–`6` direct jump (`1`–`7` on Linux); `j`/`k` or arrow keys for scrolling; `q` or `Ctrl-C` to quit.
 - 💬 **Status bar** — persistent one-line keybinding reference at the bottom, context-aware per tab.
 
 ---
@@ -47,18 +49,20 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 ### Prerequisites
 
 - Rust toolchain ≥ 1.85 (`rustup update stable`)
-- Linux kernel with standard `/sys` and `/proc` mounts
+- **Linux**, **Windows 10+**, or **macOS 12+**
+- GPU tab additionally requires a Linux kernel with standard `/sys` mounts and the `amdgpu` driver (AMD) or NVIDIA proprietary drivers (NVIDIA)
 
-### Build (default — AMD / no dedicated GPU)
+### Build (default)
 
 ```bash
 git clone <repo>
 cd narsil
 cargo build --release
-./target/release/narsil
+./target/release/narsil   # Linux / macOS
+.\target\release\narsil.exe  # Windows
 ```
 
-### Build with NVIDIA support 🟢
+### Build with NVIDIA support 🟢 *(Linux only)*
 
 Requires NVIDIA proprietary drivers installed (NVML library must be present at link time).
 
@@ -69,6 +73,8 @@ cargo build --release --features nvidia
 ---
 
 ## 🎮 GPU support matrix
+
+> GPU monitoring is **Linux-only**. On Windows and macOS the GPU tab is not compiled in; all other tabs work normally.
 
 | Vendor | Driver | Detected | Utilisation | Memory | Temperature | Power |
 |--------|--------|----------|-------------|--------|-------------|-------|
@@ -86,15 +92,16 @@ cargo build --release --features nvidia
 
 ## ⌨️ Keybindings
 
-| Key | Action |
-|-----|--------|
-| `Tab` / `Shift+Tab` | Next / previous tab (wraps around) |
-| `1` – `7` | Jump directly to tab |
-| `→` / `l` | Next tab |
-| `←` / `h` | Previous tab |
-| `↓` / `j` | Scroll down (Disks, Processes, GPU tabs) |
-| `↑` / `k` | Scroll up |
-| `q` / `Ctrl-C` | Quit |
+| Key | Action | Platform |
+|-----|--------|----------|
+| `Tab` / `Shift+Tab` | Next / previous tab (wraps around) | all |
+| `1` – `6` | Jump directly to tab | all |
+| `7` | Jump to GPU tab | Linux only |
+| `→` / `l` | Next tab | all |
+| `←` / `h` | Previous tab | all |
+| `↓` / `j` | Scroll down (Disks, Processes; + GPU on Linux) | all |
+| `↑` / `k` | Scroll up | all |
+| `q` / `Ctrl-C` | Quit | all |
 
 ---
 
@@ -102,10 +109,34 @@ cargo build --release --features nvidia
 
 ```
 src/
-├── main.rs      — terminal setup, raw-mode lifecycle, event + tick loop
-├── app.rs       — App state, all metric refresh logic (CPU/RAM/Net/Disk/GPU)
-└── ui.rs        — ratatui rendering: one function per tab + shared helpers
-                   (SplitGauge custom widget lives here)
+├── main.rs               — terminal setup, raw-mode lifecycle, event + tick loop
+├── app.rs                — App state dispatcher: calls each metrics::refresh on every tick
+├── metrics/
+│   ├── mod.rs            — HISTORY_LEN constant, push_history helper, re-exports
+│   ├── cpu.rs            — CpuState, per-core + global history
+│   ├── memory.rs         — MemState, RAM + swap
+│   ├── network.rs        — NetState, RX/TX rates and history
+│   ├── disks.rs          — DiskState, per-partition usage
+│   ├── processes.rs      — ProcessEntry, top-100 by CPU
+│   └── gpu/
+│       ├── mod.rs        — GpuEntry, vendor dispatch
+│       ├── amd.rs        — sysfs-based AMD metrics
+│       └── nvidia.rs     — NVML-based NVIDIA metrics (feature-gated)
+└── ui/
+    ├── mod.rs            — draw() entry point
+    ├── helpers.rs        — format_bytes, usage_color, scroll_indicator
+    ├── statusbar.rs      — persistent keybinding bar
+    ├── tab_bar.rs        — tab header row
+    ├── widgets/
+    │   └── split_gauge.rs — SplitGauge custom widget
+    └── tabs/
+        ├── overview.rs   — combined overview tab
+        ├── cpu.rs
+        ├── memory.rs
+        ├── network.rs
+        ├── disks.rs
+        ├── processes.rs
+        └── gpu.rs
 ```
 
 Data flows in one direction:
@@ -115,6 +146,36 @@ app.on_tick()  →  App (shared state)  →  ui::draw()  →  ratatui frame
 ```
 
 There is no async runtime; `crossterm::event::poll` provides the non-blocking event check.
+
+---
+
+## 🧪 Testing
+
+The test suite lives in `src/tests/` and is compiled only in test builds (`#[cfg(test)]`). It covers the full public API: metric structs, refresh functions, UI helpers, and the `SplitGauge` widget.
+
+```bash
+cargo test
+```
+
+### Test coverage overview
+
+| Module | What is tested |
+|---|---|
+| `tests::push_history` | Ring-buffer eviction, growth to capacity, length invariant |
+| `tests::helpers` | `format_bytes` SI boundaries, `usage_color`/`_f64` thresholds, `scroll_indicator` states |
+| `tests::cpu` | `CpuState::new` zeroed state & history dimensions; `refresh` valid range & history cap |
+| `tests::memory` | `MemState::new` zeroed state; `refresh` `used ≤ total` + history cap |
+| `tests::network` | `NetState::new` zeroed state; `refresh` history cap & rate consistency |
+| `tests::disks` | `DiskState` field storage; `refresh` non-empty result, `used ≤ total`, non-empty names/mounts |
+| `tests::processes` | `ProcessEntry` field storage; `refresh` ≤ 100 entries, CPU-descending sort, non-empty names |
+| `tests::gpu` | `GpuEntry::new` zeroed fields, history lengths; `amd::refresh` smoke test & invariants | Linux only |
+| `tests::split_gauge` | Ratio clamping, full/empty/half fill, label centring, block inner area, zero-size no-panic |
+
+### Running with NVIDIA feature
+
+```bash
+cargo test --features nvidia
+```
 
 ---
 
@@ -167,7 +228,7 @@ Items are loosely ordered by priority.
 | Feature | `top` | `htop` | `gotop` | **narsil** |
 |---------|-------|--------|---------|-----------|
 | Language | C | C | Go | 🦀 **Rust** |
-| GPU metrics | ❌ | ❌ | partial | **✅ AMD + NVIDIA** |
+| GPU metrics | ❌ | ❌ | partial | **✅ AMD + NVIDIA (Linux)** |
 | Braille charts | ❌ | ❌ | ✅ | **✅** |
 | Per-char label inversion | ❌ | ❌ | ❌ | **✅** |
 | Disk usage bars | ❌ | ❌ | ✅ | **✅** |

@@ -28,6 +28,7 @@ use ratatui::{
 
 use crate::app::App;
 
+#[cfg(target_os = "linux")]
 const TAB_TITLES: &[&str] = &[
     "Overview [1]",
     "CPU [2]",
@@ -36,6 +37,16 @@ const TAB_TITLES: &[&str] = &[
     "Disks [5]",
     "Processes [6]",
     "GPU [7]",
+];
+
+#[cfg(not(target_os = "linux"))]
+const TAB_TITLES: &[&str] = &[
+    "Overview [1]",
+    "CPU [2]",
+    "Memory [3]",
+    "Network [4]",
+    "Disks [5]",
+    "Processes [6]",
 ];
 
 /// Renders the tab-navigation bar in `area`, highlighting the tab at index

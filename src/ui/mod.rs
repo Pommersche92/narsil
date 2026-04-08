@@ -57,6 +57,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         3 => tabs::network::draw(frame, app, chunks[1]),
         4 => tabs::disks::draw(frame, app, chunks[1]),
         5 => tabs::processes::draw(frame, app, chunks[1]),
+        #[cfg(target_os = "linux")]
         6 => tabs::gpu::draw(frame, app, chunks[1]),
         _ => {}
     }
