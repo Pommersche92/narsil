@@ -506,12 +506,88 @@
     /* ── Install ─────────────────────────────────────────── */
     #install { padding: 8rem 0; }
 
-    .install-wrap { max-width: 720px; margin: 0 auto; }
+    /* Channels overview grid */
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 0 auto 2.8rem;
+      max-width: 900px;
+    }
+    .channel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1.2rem 1rem 1rem;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .channel-card:hover {
+      border-color: rgba(200,168,75,0.45);
+      transform: translateY(-3px);
+    }
+    .channel-icon { font-size: 1.6rem; margin-bottom: 0.45rem; line-height: 1; }
+    .channel-icon img { width: 2rem; height: 2rem; object-fit: contain; }
+    .channel-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+    .channel-desc {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 0.65rem;
+    }
+    .channel-cmd {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--steel-lt);
+      background: rgba(0,0,0,0.4);
+      padding: 0.3rem 0.5rem;
+      border-radius: 2px;
+      word-break: break-all;
+    }
+
+    .install-wrap { max-width: 855px; margin: 0 auto; }
 
     .tab-bar {
       display: flex;
+      flex-wrap: wrap;
       border-bottom: 1px solid var(--border);
     }
+
+    /* AUR table inside tab panel */
+    .aur-table {
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.2rem;
+    }
+    .aur-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 0.6fr;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.82rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      align-items: center;
+    }
+    .aur-row:last-child { border-bottom: none; }
+    .aur-row.header {
+      background: rgba(200,168,75,0.07);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+    }
+    .aur-row a { color: var(--steel-lt); text-decoration: none; }
+    .aur-row a:hover { color: var(--gold); }
+    .chip-yes { color: #5abf72; font-weight: 700; }
+    .chip-no  { color: var(--text-dim); }
+
     .tab-btn {
       padding: 0.65rem 1.4rem;
       background: none;
@@ -595,6 +671,15 @@
     .install-note code {
       font-size: 0.82rem;
       color: var(--steel-lt);
+    }
+    .install-note a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-decoration-color: rgba(200,168,75,0.4);
+      text-underline-offset: 2px;
+    }
+    .install-note a:hover {
+      text-decoration-color: var(--gold);
     }
 
     /* ── GPU ─────────────────────────────────────────────── */

@@ -46,25 +46,86 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 
 ### Prerequisites
 
-- Rust toolchain ≥ 1.85 (`rustup update stable`)
 - **Linux**, **Windows 10+**, or **macOS 12+**
-- GPU tab additionally requires a Linux kernel with standard `/sys` mounts and the `amdgpu` driver (AMD) or NVIDIA proprietary drivers (NVIDIA)
+- GPU tab requires Linux with standard `/sys` mounts and `amdgpu` (AMD) or NVIDIA proprietary drivers
+- Rust toolchain ≥ 1.85 — needed only for `cargo install` or source builds (`rustup update stable`)
 
-### Build (default)
+### Official release channels
+
+| Channel | Platforms | Standard | NVIDIA variant |
+|---------|-----------|----------|----------------|
+| **crates.io** | all | `cargo install narsil` | `cargo install narsil --features nvidia` |
+| **AUR** | Arch Linux | `narsil` · `narsil-bin` | `narsil-nvidia` · `narsil-nvidia-bin` |
+| **AppImage** | Linux x86_64 | `narsil-{ver}-x86_64.AppImage` | `narsil-nvidia-{ver}-x86_64.AppImage` |
+| **Windows zip** | Windows x86_64 | `narsil-{ver}-x86_64-windows.zip` | `narsil-nvidia-{ver}-x86_64-windows.zip` |
+| **Linux tarball** | Linux x86_64 | `narsil-{ver}-x86_64.tar.gz` | `narsil-nvidia-{ver}-x86_64.tar.gz` |
+| **Source** | all | `cargo build --release` | `cargo build --release --features nvidia` |
+
+AppImage, Windows zip, and Linux tarball are attached to every [GitHub release](https://github.com/Pommersche92/narsil/releases).
+
+### crates.io
 
 ```bash
-git clone <repo>
-cd narsil
-cargo build --release
-./target/release/narsil   # Linux / macOS
-.\target\release\narsil.exe  # Windows
+cargo install narsil                      # standard
+cargo install narsil --features nvidia    # with NVIDIA GPU support (Linux only)
 ```
 
-### Build with NVIDIA support 🟢 *(Linux only)*
+### AUR (Arch Linux)
 
-Requires NVIDIA proprietary drivers installed (NVML library must be present at link time).
+Four packages are published to the AUR:
+
+| Package | Type | Description |
+|---------|------|-------------|
+| [`narsil`](https://aur.archlinux.org/packages/narsil) | source | standard, compiled from the crates.io source tarball |
+| [`narsil-nvidia`](https://aur.archlinux.org/packages/narsil-nvidia) | source | like `narsil` but built with `--features nvidia` |
+| [`narsil-bin`](https://aur.archlinux.org/packages/narsil-bin) | binary | standard, installs prebuilt tarball from GitHub Releases |
+| [`narsil-nvidia-bin`](https://aur.archlinux.org/packages/narsil-nvidia-bin) | binary | NVIDIA variant, installs prebuilt tarball from GitHub Releases |
 
 ```bash
+yay -S narsil              # standard, built from source
+yay -S narsil-nvidia       # with NVIDIA GPU support, built from source
+yay -S narsil-bin          # standard, prebuilt binary
+yay -S narsil-nvidia-bin   # with NVIDIA GPU support, prebuilt binary
+```
+
+### AppImage (Linux x86_64)
+
+Download from the [latest GitHub release](https://github.com/Pommersche92/narsil/releases/latest), make executable and run:
+
+```bash
+chmod +x narsil-*-x86_64.AppImage
+./narsil-*-x86_64.AppImage
+```
+
+Two variants per release: `narsil-{version}-x86_64.AppImage` (standard) and `narsil-nvidia-{version}-x86_64.AppImage` (with NVIDIA support).
+
+### Windows (x86_64)
+
+Download `narsil-{version}-x86_64-windows.zip` or `narsil-nvidia-{version}-x86_64-windows.zip` from the [latest GitHub release](https://github.com/Pommersche92/narsil/releases/latest), extract, and run `narsil.exe` in PowerShell or cmd.
+
+> The GPU tab is not compiled into the Windows build.
+
+### Linux tarball (x86_64)
+
+Download from the [latest GitHub release](https://github.com/Pommersche92/narsil/releases/latest):
+
+```bash
+tar xzf narsil-{version}-x86_64.tar.gz
+./narsil-{version}/narsil
+```
+
+Both standard and NVIDIA variants are available.
+
+### Build from source
+
+```bash
+git clone https://github.com/Pommersche92/narsil
+cd narsil
+cargo build --release
+./target/release/narsil        # Linux / macOS
+.\target\release\narsil.exe    # Windows
+
+# With NVIDIA GPU support (Linux only):
 cargo build --release --features nvidia
 ```
 

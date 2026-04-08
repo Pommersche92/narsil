@@ -175,19 +175,62 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">Forge Your Blade</p>
       <h2 class="s-title">Installation</h2>
-      <p class="s-desc">Requires Rust ≥ 1.85. Runs on <strong>Linux</strong>, <strong>Windows 10+</strong>, and <strong>macOS 12+</strong>. GPU support requires Linux with standard <code>/sys</code> mounts.</p>
+      <p class="s-desc">Runs on <strong>Linux</strong>, <strong>Windows 10+</strong>, and <strong>macOS 12+</strong>. Rust is only needed for the crates.io and source options. GPU support requires Linux.</p>
+    </div>
+
+    <div class="channels-grid fade-in-up">
+      <div class="channel-card">
+        <div class="channel-icon"><img src="assets/crates-io.png" alt="crates.io"></div>
+        <div class="channel-name">crates.io</div>
+        <div class="channel-desc">All platforms · Rust needed</div>
+        <code class="channel-cmd">cargo install narsil</code>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="assets/archlinux.svg" alt="Arch Linux"></div>
+        <div class="channel-name">AUR</div>
+        <div class="channel-desc">Arch Linux · 4 packages</div>
+        <code class="channel-cmd">yay -S narsil-bin</code>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="assets/appimage.svg" alt="AppImage"></div>
+        <div class="channel-name">AppImage</div>
+        <div class="channel-desc">Linux x86_64 · self-contained</div>
+        <code class="channel-cmd">./narsil-*.AppImage</code>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon"><img src="assets/windows.svg" alt="Windows"></div>
+        <div class="channel-name">Windows</div>
+        <div class="channel-desc">x86_64 · zip from Releases</div>
+        <code class="channel-cmd">narsil.exe</code>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🗃️</div>
+        <div class="channel-name">Tarball</div>
+        <div class="channel-desc">Linux x86_64 · GitHub Releases</div>
+        <code class="channel-cmd">tar xzf narsil-*.tar.gz</code>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🔨</div>
+        <div class="channel-name">Source</div>
+        <div class="channel-desc">All platforms · Rust needed</div>
+        <code class="channel-cmd">cargo build --release</code>
+      </div>
     </div>
 
     <div class="install-wrap fade-in-up">
       <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('crates', this)">From crates.io</button>
-        <button class="tab-btn"        onclick="switchTab('source', this)">From source</button>
-        <button class="tab-btn"        onclick="switchTab('nvidia', this)">NVIDIA support (Linux)</button>
+        <button class="tab-btn active" onclick="switchTab('crates',   this)">crates.io</button>
+        <button class="tab-btn"        onclick="switchTab('aur',      this)">AUR</button>
+        <button class="tab-btn"        onclick="switchTab('appimage', this)">AppImage</button>
+        <button class="tab-btn"        onclick="switchTab('windows',  this)">Windows</button>
+        <button class="tab-btn"        onclick="switchTab('tarball',  this)">Tarball</button>
+        <button class="tab-btn"        onclick="switchTab('source',   this)">From source</button>
+        <button class="tab-btn"        onclick="switchTab('nvidia',   this)">NVIDIA support</button>
       </div>
 
       <!-- crates.io -->
       <div class="tab-panel active" id="tab-crates">
-        <p class="tab-intro">The quickest path. Cargo fetches, compiles with full optimisations, and installs the binary.</p>
+        <p class="tab-intro">The quickest path. Cargo fetches, compiles with full optimisations, and installs the binary to <code>~/.cargo/bin/</code>. Works on Linux, Windows, and macOS.</p>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this, 'cargo install narsil')">copy</button>
           <div class="code-block">
@@ -195,7 +238,100 @@
           </div>
         </div>
         <div class="install-note">
-          This places the binary in <code>~/.cargo/bin/</code>. Make sure that directory is on your <code>$PATH</code>.
+          Make sure <code>~/.cargo/bin/</code> is on your <code>$PATH</code>. For NVIDIA GPU support see the <em>NVIDIA support</em> tab.
+        </div>
+      </div>
+
+      <!-- AUR -->
+      <div class="tab-panel" id="tab-aur">
+        <p class="tab-intro">Four AUR packages cover every combination of source/binary and standard/NVIDIA.</p>
+        <div class="aur-table">
+          <div class="aur-row header">
+            <span>Package</span><span>Type</span><span>NVIDIA</span>
+          </div>
+          <div class="aur-row">
+            <a href="https://aur.archlinux.org/packages/narsil" target="_blank" rel="noopener"><code>narsil</code></a>
+            <span>source</span><span class="chip-no">—</span>
+          </div>
+          <div class="aur-row">
+            <a href="https://aur.archlinux.org/packages/narsil-nvidia" target="_blank" rel="noopener"><code>narsil-nvidia</code></a>
+            <span>source</span><span class="chip-yes">✓</span>
+          </div>
+          <div class="aur-row">
+            <a href="https://aur.archlinux.org/packages/narsil-bin" target="_blank" rel="noopener"><code>narsil-bin</code></a>
+            <span>binary</span><span class="chip-no">—</span>
+          </div>
+          <div class="aur-row">
+            <a href="https://aur.archlinux.org/packages/narsil-nvidia-bin" target="_blank" rel="noopener"><code>narsil-nvidia-bin</code></a>
+            <span>binary</span><span class="chip-yes">✓</span>
+          </div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.2rem">
+          <button class="copy-btn" onclick="copyCode(this, 'yay -S narsil-bin')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># Prebuilt binary — fastest install</span>
+<span class="c-cmd">yay</span> <span class="c-flag">-S</span> <span class="c-string">narsil-bin</span>
+
+<span class="c-comment"># Or build from source</span>
+<span class="c-cmd">yay</span> <span class="c-flag">-S</span> <span class="c-string">narsil</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AppImage -->
+      <div class="tab-panel" id="tab-appimage">
+        <p class="tab-intro">Self-contained Linux bundle — no installation needed. Download, make executable, run.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, 'chmod +x narsil-*-x86_64.AppImage\n./narsil-*-x86_64.AppImage')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># Download from GitHub Releases, then:</span>
+<span class="c-cmd">chmod</span> <span class="c-arg">+x</span> <span class="c-string">narsil-*-x86_64.AppImage</span>
+<span class="c-cmd">./narsil-*-x86_64.AppImage</span>
+          </div>
+        </div>
+        <div class="install-note">
+          Two variants per release:
+          <code>narsil-{version}-x86_64.AppImage</code> (standard) and
+          <code>narsil-nvidia-{version}-x86_64.AppImage</code> (with NVIDIA support).
+          Requires a Linux x86_64 system.<br><br>
+          <a href="https://github.com/Pommersche92/narsil/releases/latest" target="_blank" rel="noopener">→ Latest GitHub Release ↗</a>
+        </div>
+      </div>
+
+      <!-- Windows -->
+      <div class="tab-panel" id="tab-windows">
+        <p class="tab-intro">Prebuilt Windows x86_64 executable — no Rust, no compiler needed. Download, extract, run in PowerShell or cmd.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, '.\\narsil.exe')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># After extracting the zip:</span>
+<span class="c-cmd">.\narsil.exe</span>
+          </div>
+        </div>
+        <div class="install-note">
+          Download <code>narsil-{version}-x86_64-windows.zip</code> from
+          <a href="https://github.com/Pommersche92/narsil/releases/latest" target="_blank" rel="noopener">GitHub Releases ↗</a>.
+          A NVIDIA variant (<code>narsil-nvidia-…-windows.zip</code>) is also provided.<br><br>
+          The GPU tab is not compiled into the Windows build. All other tabs work normally.
+        </div>
+      </div>
+
+      <!-- Tarball -->
+      <div class="tab-panel" id="tab-tarball">
+        <p class="tab-intro">Plain Linux tarball — drop the binary wherever you like. No package manager needed.</p>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this, 'tar xzf narsil-VERSION-x86_64.tar.gz\n./narsil-VERSION/narsil')">copy</button>
+          <div class="code-block">
+<span class="c-comment"># Replace VERSION with the actual release tag</span>
+<span class="c-cmd">tar</span> <span class="c-arg">xzf</span> <span class="c-string">narsil-VERSION-x86_64.tar.gz</span>
+<span class="c-cmd">./narsil-VERSION/narsil</span>
+          </div>
+        </div>
+        <div class="install-note">
+          Download from
+          <a href="https://github.com/Pommersche92/narsil/releases/latest" target="_blank" rel="noopener">GitHub Releases ↗</a>.
+          Two variants: <code>narsil-{version}-x86_64.tar.gz</code> (standard) and
+          <code>narsil-nvidia-{version}-x86_64.tar.gz</code> (with NVIDIA support).
         </div>
       </div>
 
@@ -203,29 +339,34 @@
       <div class="tab-panel" id="tab-source">
         <p class="tab-intro">Clone and build locally — ideal for development or inspecting the forge.</p>
         <div class="code-wrap">
-          <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/Pommersche92/narsil\ncd narsil\ncargo run --release')">copy</button>
+          <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/Pommersche92/narsil\ncd narsil\ncargo build --release')">copy</button>
           <div class="code-block">
-<span class="c-comment"># Clone the repository</span>
 <span class="c-cmd">git</span> <span class="c-arg">clone</span> <span class="c-string">https://github.com/Pommersche92/narsil</span>
 <span class="c-cmd">cd</span> <span class="c-arg">narsil</span>
+<span class="c-cmd">cargo</span> <span class="c-arg">build</span> <span class="c-flag">--release</span>
 
-<span class="c-comment"># Build in release mode and run</span>
-<span class="c-cmd">cargo</span> <span class="c-arg">run</span> <span class="c-flag">--release</span>
+<span class="c-comment"># Linux / macOS</span>
+<span class="c-cmd">./target/release/narsil</span>
+<span class="c-comment"># Windows</span>
+<span class="c-cmd">.\target\release\narsil.exe</span>
           </div>
         </div>
       </div>
 
       <!-- nvidia -->
       <div class="tab-panel" id="tab-nvidia">
-        <p class="tab-intro">Enable NVIDIA GPU monitoring via NVML. Requires proprietary NVIDIA drivers installed at link time.</p>
+        <p class="tab-intro">Enable NVIDIA GPU monitoring via NVML. Requires proprietary NVIDIA drivers at link time. Linux only.</p>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this, 'cargo install narsil --features nvidia')">copy</button>
           <div class="code-block">
-<span class="c-comment"># From crates.io with NVIDIA support</span>
+<span class="c-comment"># From crates.io</span>
 <span class="c-cmd">cargo</span> <span class="c-arg">install</span> <span class="c-string">narsil</span> <span class="c-flag">--features</span> <span class="c-arg">nvidia</span>
 
-<span class="c-comment"># Or from source</span>
+<span class="c-comment"># From source</span>
 <span class="c-cmd">cargo</span> <span class="c-arg">build</span> <span class="c-flag">--release --features</span> <span class="c-arg">nvidia</span>
+
+<span class="c-comment"># AUR</span>
+<span class="c-cmd">yay</span> <span class="c-flag">-S</span> <span class="c-string">narsil-nvidia-bin</span>
           </div>
         </div>
         <div class="install-note">
