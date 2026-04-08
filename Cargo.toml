@@ -1,0 +1,20 @@
+[package]
+name = "narsil"
+version = "0.1.0"
+edition = "2024"
+description = "A terminal-based system resource monitor"
+
+[features]
+# Enable NVIDIA GPU monitoring via NVML (requires NVIDIA drivers at link time)
+nvidia = ["dep:nvml-wrapper"]
+
+[dependencies]
+ratatui = "0.29"
+crossterm = { version = "0.28", features = ["event-stream"] }
+sysinfo = "0.33"
+anyhow = "1"
+nvml-wrapper = { version = "0.10", optional = true }
+
+[[bin]]
+name = "narsil"
+path = "src/main.rs"
