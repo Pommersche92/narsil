@@ -2,7 +2,13 @@
 name = "narsil"
 version = "0.1.0"
 edition = "2024"
-description = "A terminal-based system resource monitor"
+description = "A terminal-based system resource monitor — GPU-aware, Braille charts, per-char label inversion"
+license-file = "LICENSE"
+repository = "https://github.com/Pommersche92/narsil"
+homepage = "https://github.com/Pommersche92/narsil"
+readme = "README.md"
+keywords = ["system-monitor", "tui", "terminal", "ratatui", "gpu"]
+categories = ["command-line-utilities", "visualization"]
 
 [features]
 # Enable NVIDIA GPU monitoring via NVML (requires NVIDIA drivers at link time)
