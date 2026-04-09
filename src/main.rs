@@ -17,6 +17,12 @@
 //!
 //! Initialises the crossterm raw-mode terminal, runs the main event/tick loop,
 //! and restores the terminal on both normal exit and errors.
+//!
+//! # CLI flags
+//!
+//! | Flag | Default | Description |
+//! |------|---------|-------------|
+//! | `--interval <ms>` | 1000 | Refresh interval in milliseconds |
 
 mod app;
 mod metrics;
@@ -46,9 +52,52 @@ const TAB_COUNT: usize = 7;
 #[cfg(not(target_os = "linux"))]
 const TAB_COUNT: usize = 6;
 
+/// Default refresh interval in milliseconds.
+const DEFAULT_INTERVAL_MS: u64 = 1000;
+
+/// Parses `--interval <ms>` from the process arguments.
+///
+/// Returns [`DEFAULT_INTERVAL_MS`] when the flag is absent, and exits with a
+/// human-readable error message when the supplied value is not a positive
+/// integer.
+fn parse_interval_ms() -> u64 {
+    let mut args = std::env::args().skip(1);
+    while let Some(arg) = args.next() {
+        if arg == "--interval" {
+            match args.next() {
+                Some(val) => match val.parse::<u64>() {
+                    Ok(0) => {
+                        eprintln!("error: --interval must be greater than 0");
+                        std::process::exit(1);
+                    }
+                    Ok(ms) => return ms,
+                    Err(_) => {
+                        eprintln!("error: --interval expects a positive integer (milliseconds), got {:?}", val);
+                        std::process::exit(1);
+                    }
+                },
+                None => {
+                    eprintln!("error: --interval requires a value");
+                    std::process::exit(1);
+                }
+            }
+        } else if arg == "--help" || arg == "-h" {
+            println!("Usage: narsil [--interval <ms>]");
+            println!();
+            println!("Options:");
+            println!("  --interval <ms>   Refresh interval in milliseconds [default: {}]", DEFAULT_INTERVAL_MS);
+            println!("  -h, --help        Print this help message");
+            std::process::exit(0);
+        }
+    }
+    DEFAULT_INTERVAL_MS
+}
+
 /// Initialises the terminal (raw mode, alternate screen, mouse capture),
 /// delegates to [`run_app`], and guarantees terminal restoration on exit.
 fn main() -> Result<()> {
+    let interval_ms = parse_interval_ms();
+
     // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -56,7 +105,7 @@ fn main() -> Result<()> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let result = run_app(&mut terminal);
+    let result = run_app(&mut terminal, interval_ms);
 
     // Restore terminal
     disable_raw_mode()?;
@@ -79,8 +128,14 @@ fn main() -> Result<()> {
 /// Draws the UI every frame, polls for crossterm [`Event`]s, dispatches
 /// keyboard input to update [`App`] state, and calls [`App::on_tick`] once
 /// per tick to refresh all metrics.
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
+///
+/// `interval_ms` controls how often [`App::on_tick`] is called.
+fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>, interval_ms: u64) -> Result<()>
+where
+    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
+{
     let mut app = App::new();
+    app.tick_rate_ms = interval_ms;
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(app.tick_rate_ms);
 
