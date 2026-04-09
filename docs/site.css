@@ -846,8 +846,33 @@
     .rm-dot.near   { background: var(--ember);  box-shadow: 0 0 6px var(--ember-glow); }
     .rm-dot.mid    { background: var(--gold);   box-shadow: 0 0 6px var(--gold-glow); }
     .rm-dot.far    { background: var(--steel);  box-shadow: 0 0 5px rgba(122,154,191,0.4); }
+    .rm-dot.done   { background: #4caf7d;       box-shadow: 0 0 7px rgba(76,175,125,0.55); }
+    .rm-item.done  { position: relative; opacity: 0.72; overflow: visible; }
     .rm-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
     .rm-text code { font-size: 0.82rem; color: var(--steel-lt); }
+    .done-text { text-decoration: line-through; text-decoration-color: rgba(76,175,125,0.55); }
+    .rm-done-tag {
+      /* centred sticker overlay */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      pointer-events: none;
+      /* sizing */
+      padding: 0.18em 0.7em;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      /* stamp look */
+      color: #4caf7d;
+      background: rgba(10, 18, 14, 0.82);
+      border: 2px solid #4caf7d;
+      box-shadow: 0 0 8px rgba(76,175,125,0.45), inset 0 0 6px rgba(76,175,125,0.08);
+      text-shadow: 0 0 6px rgba(76,175,125,0.6);
+    }
 
     /* ── Footer ──────────────────────────────────────────── */
     footer {

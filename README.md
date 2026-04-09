@@ -36,7 +36,7 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 - 🎨 **Split-colour gauges** — the percentage label rendered inside every gauge automatically inverts its colour character-by-character at the fill boundary so it is always readable, even when the bar is exactly at 50%.
 - 📜 **Scroll indicators** — any panel that cannot display all items at once shows `▲`/`▼`/`▲▼` in its title.
 - 📐 **Dynamic sizing** — all panels adapt to the current terminal dimensions; no hard-coded row counts.
-- ⚡ **1-second refresh** driven by a tick loop; key events are processed between ticks with zero busy-waiting.
+- ⚡ **Configurable refresh rate** — pass `--interval <ms>` on startup (default 1 000 ms) to tune between low-latency and low-CPU usage; key events are processed between ticks with zero busy-waiting.
 - ⌨️ **Keyboard-first navigation**: `Tab` / `Shift+Tab` wrap-around tab switching; `1`–`6` direct jump (`1`–`7` on Linux); `j`/`k` or arrow keys for scrolling; `q` or `Ctrl-C` to quit.
 - 💬 **Status bar** — persistent one-line keybinding reference at the bottom, context-aware per tab.
 
@@ -258,7 +258,7 @@ Items are loosely ordered by priority.
 
 - 🔵 **Intel GPU support** — utilisation via GT frequency ratio (`i915`/`xe` sysfs), LMEM for Intel Arc cards, temperature via hwmon; shown with appropriate caveats for iGPUs
 - 🏷️ **AMD APU label fix** — distinguish GTT (shared) from dedicated VRAM and label accordingly
-- ⏱️ **Configurable refresh rate** — CLI flag `--interval <ms>` to tune between low-latency and low-CPU usage
+- ~~⏱️ **Configurable refresh rate** — CLI flag `--interval <ms>` to tune between low-latency and low-CPU usage~~ ✅
 - 🎨 **Colour themes** — built-in dark/light/high-contrast theme switcher
 
 ### 🔧 Medium-term

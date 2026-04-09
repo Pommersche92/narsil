@@ -152,8 +152,9 @@
 
       <div class="feat-card fade-in-up">
         <span class="feat-icon">⚡</span>
-        <h3 class="feat-title">Zero Busy-Wait</h3>
-        <p class="feat-desc">A 1-second tick loop drives all rendering. Key events are processed between ticks with zero busy-waiting — swift and silent as a ranger.</p>
+        <h3 class="feat-title">Configurable Refresh Rate</h3>
+        <p class="feat-desc">Pass <code>--interval &lt;ms&gt;</code> to tune between low-latency and low-CPU usage. Defaults to 1 000 ms. Key events are processed between ticks with zero busy-waiting — swift and silent as a ranger.</p>
+        <span class="feat-tag"><code>--interval &lt;ms&gt;</code></span>
       </div>
 
     </div>
@@ -601,7 +602,7 @@
         <h3>🔜 Near-term</h3>
         <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🔵 Intel GPU support via i915 / xe sysfs and hwmon</div></div>
         <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🏷️ AMD APU label fix — distinguish GTT from dedicated VRAM</div></div>
-        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">⏱️ Configurable refresh rate via <code>--interval &lt;ms&gt;</code></div></div>
+        <div class="rm-item done"><div class="rm-dot done"></div><div class="rm-text done-text">⏱️ Configurable refresh rate via <code>--interval &lt;ms&gt;</code></div><span class="rm-done-tag" aria-label="Done">DONE</span></div>
         <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🎨 Built-in colour themes — dark, light, high-contrast</div></div>
       </div>
 
