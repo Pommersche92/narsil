@@ -6,7 +6,6 @@ rust-version = "1.85"
 authors = ["Raimo Geisel"]
 description = "A terminal-based system resource monitor — GPU-aware, Braille charts, per-char label inversion"
 license = "GPL-3.0-only"
-license-file = "LICENSE"
 repository = "https://github.com/Pommersche92/narsil"
 homepage = "https://shards-of-narsil.app"
 readme = "README.md"
