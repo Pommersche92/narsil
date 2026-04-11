@@ -38,7 +38,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let can_up = scroll > 0;
     let can_down = scroll + visible < total;
     let indicator = scroll_indicator(can_up, can_down);
-    let title = format!(" Processes (sorted by CPU){indicator} ");
+    let title = format!(" {}{indicator} ", app.t.processes_title);
 
     draw_table(frame, app, area, visible, &title);
 }
@@ -49,10 +49,10 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
 /// Called by both the Processes tab and the Overview tab.
 pub fn draw_table(frame: &mut Frame, app: &App, area: Rect, limit: usize, title: &str) {
     let header = Row::new(vec![
-        Cell::from("PID").style(Style::default().add_modifier(Modifier::BOLD)),
-        Cell::from("Name").style(Style::default().add_modifier(Modifier::BOLD)),
-        Cell::from("CPU %").style(Style::default().add_modifier(Modifier::BOLD)),
-        Cell::from("Mem (KiB)").style(Style::default().add_modifier(Modifier::BOLD)),
+        Cell::from(app.t.col_pid.as_str()).style(Style::default().add_modifier(Modifier::BOLD)),
+        Cell::from(app.t.col_name.as_str()).style(Style::default().add_modifier(Modifier::BOLD)),
+        Cell::from(app.t.col_cpu_pct.as_str()).style(Style::default().add_modifier(Modifier::BOLD)),
+        Cell::from(app.t.col_mem_kib.as_str()).style(Style::default().add_modifier(Modifier::BOLD)),
     ])
     .style(Style::default().fg(Color::Yellow));
 

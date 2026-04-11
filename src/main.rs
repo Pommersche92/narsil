@@ -25,6 +25,7 @@
 //! | `--interval <ms>` | 1000 | Refresh interval in milliseconds |
 
 mod app;
+mod i18n;
 mod metrics;
 mod ui;
 
@@ -45,6 +46,7 @@ use crossterm::{
 use ratatui::{Terminal, backend::CrosstermBackend};
 
 use app::App;
+use i18n::detect_lang_code;
 
 /// Number of tabs: 7 on Linux (includes GPU), 6 on other platforms.
 #[cfg(target_os = "linux")]
@@ -55,24 +57,29 @@ const TAB_COUNT: usize = 6;
 /// Default refresh interval in milliseconds.
 const DEFAULT_INTERVAL_MS: u64 = 1000;
 
-/// Parses `--interval <ms>` from the process arguments.
+/// Parses `--interval <ms>` and `--lang <code>` from the process arguments.
 ///
-/// Returns [`DEFAULT_INTERVAL_MS`] when the flag is absent, and exits with a
-/// human-readable error message when the supplied value is not a positive
-/// integer.
-fn parse_interval_ms() -> u64 {
+/// The language defaults to the ISO 639-1 code detected from the OS locale
+/// (`LANGUAGE`, `LC_ALL`, `LC_MESSAGES`, `LANG`) and can be overridden with
+/// `--lang`. Returns `(interval_ms, lang_code)`.
+fn parse_args() -> (u64, String) {
+    let mut interval_ms = DEFAULT_INTERVAL_MS;
+    let mut lang = detect_lang_code();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
-        if arg == "--interval" {
-            match args.next() {
+        match arg.as_str() {
+            "--interval" => match args.next() {
                 Some(val) => match val.parse::<u64>() {
                     Ok(0) => {
                         eprintln!("error: --interval must be greater than 0");
                         std::process::exit(1);
                     }
-                    Ok(ms) => return ms,
+                    Ok(ms) => interval_ms = ms,
                     Err(_) => {
-                        eprintln!("error: --interval expects a positive integer (milliseconds), got {:?}", val);
+                        eprintln!(
+                            "error: --interval expects a positive integer (milliseconds), got {:?}",
+                            val
+                        );
                         std::process::exit(1);
                     }
                 },
@@ -80,23 +87,42 @@ fn parse_interval_ms() -> u64 {
                     eprintln!("error: --interval requires a value");
                     std::process::exit(1);
                 }
+            },
+            "--lang" => match args.next() {
+                Some(code) => {
+                    lang = code;
+                }
+                None => {
+                    eprintln!("error: --lang requires an ISO language code (e.g. en, de, fr, es)");
+                    std::process::exit(1);
+                }
+            },
+            "--help" | "-h" => {
+                let detected = detect_lang_code();
+                println!("Usage: narsil [--interval <ms>] [--lang <code>]");
+                println!();
+                println!("Options:");
+                println!(
+                    "  --interval <ms>   Refresh interval in milliseconds [default: {}]",
+                    DEFAULT_INTERVAL_MS
+                );
+                println!(
+                    "  --lang <code>     UI language ISO code (e.g. en, de, fr, es) [auto-detected: {}]",
+                    detected
+                );
+                println!("  -h, --help        Print this help message");
+                std::process::exit(0);
             }
-        } else if arg == "--help" || arg == "-h" {
-            println!("Usage: narsil [--interval <ms>]");
-            println!();
-            println!("Options:");
-            println!("  --interval <ms>   Refresh interval in milliseconds [default: {}]", DEFAULT_INTERVAL_MS);
-            println!("  -h, --help        Print this help message");
-            std::process::exit(0);
+            _ => {}
         }
     }
-    DEFAULT_INTERVAL_MS
+    (interval_ms, lang)
 }
 
 /// Initialises the terminal (raw mode, alternate screen, mouse capture),
 /// delegates to [`run_app`], and guarantees terminal restoration on exit.
 fn main() -> Result<()> {
-    let interval_ms = parse_interval_ms();
+    let (interval_ms, lang) = parse_args();
 
     // Setup terminal
     enable_raw_mode()?;
@@ -105,7 +131,7 @@ fn main() -> Result<()> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let result = run_app(&mut terminal, interval_ms);
+    let result = run_app(&mut terminal, interval_ms, &lang);
 
     // Restore terminal
     disable_raw_mode()?;
@@ -130,11 +156,11 @@ fn main() -> Result<()> {
 /// per tick to refresh all metrics.
 ///
 /// `interval_ms` controls how often [`App::on_tick`] is called.
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>, interval_ms: u64) -> Result<()>
+fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>, interval_ms: u64, lang_code: &str) -> Result<()>
 where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
-    let mut app = App::new();
+    let mut app = App::new(lang_code);
     app.tick_rate_ms = interval_ms;
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(app.tick_rate_ms);

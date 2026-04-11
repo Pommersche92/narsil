@@ -1,0 +1,61 @@
+# Narsil — fichier de locale
+# Langue : Français (fr)
+
+# ── Barre d'onglets ───────────────────────────────────────────────────────────
+tab_overview  = "Vue d'ensemble"
+tab_cpu       = "CPU"
+tab_memory    = "Mémoire"
+tab_network   = "Réseau"
+tab_disks     = "Disques"
+tab_processes = "Processus"
+tab_gpu       = "GPU"
+menu_title    = "Menu"
+
+# ── Barre de statut (descriptions des raccourcis clavier) ─────────────────────
+nav_right   = "Onglet suivant"
+nav_left    = "Onglet précédent"
+jump_to_tab = "Aller à l'onglet"
+quit        = "Quitter"
+scroll_up   = "Défiler vers le haut"
+scroll_down = "Défiler vers le bas"
+
+# ── Étiquettes de l'axe temporel (graphiques d'historique) ────────────────────
+ago_60s = "il y a 60 s"
+ago_30s = "il y a 30 s"
+now     = "maintenant"
+
+# ── Onglet CPU ────────────────────────────────────────────────────────────────
+cpu_history_title = "Historique CPU"
+cpu_dataset_label = "CPU %"
+
+# ── Onglet Mémoire ────────────────────────────────────────────────────────────
+mem_history_title = "Historique mémoire"
+mem_dataset_label = "Mém. %"
+ram               = "RAM"
+swap              = "Échange"
+
+# ── Onglet Réseau ─────────────────────────────────────────────────────────────
+net_history_title    = "Historique réseau"
+net_throughput_title = "Débit actuel"
+
+# ── Onglet Disques ────────────────────────────────────────────────────────────
+# Remarque : un indicateur de défilement (▲/▼) est ajouté automatiquement.
+disk_usage_title = "Utilisation des disques"
+
+# ── Onglet Processus ──────────────────────────────────────────────────────────
+# Remarque : un indicateur de défilement est ajouté automatiquement.
+processes_title = "Processus (triés par CPU)"
+col_pid         = "PID"
+col_name        = "Nom"
+col_cpu_pct     = "CPU %"
+col_mem_kib     = "Mém. (Kio)"
+
+# ── Onglet GPU ────────────────────────────────────────────────────────────────
+gpu_no_device = "Aucun GPU compatible détecté.\n• AMD :    nécessite le pilote noyau amdgpu\n• NVIDIA : recompilez avec : cargo build --features nvidia"
+gpu_util  = "Util."
+gpu_vram  = "VRAM"
+gpu_stats = "Stats"
+gpu_temp  = "Temp. :"
+gpu_power = "Puiss. :"
+# Affiché quand une valeur capteur (température, puissance) est indisponible.
+na = "N/D"

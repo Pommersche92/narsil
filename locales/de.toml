@@ -1,0 +1,61 @@
+# Narsil — Locale-Datei
+# Sprache: Deutsch (de)
+
+# ── Tab-Leiste ────────────────────────────────────────────────────────────────
+tab_overview  = "Übersicht"
+tab_cpu       = "CPU"
+tab_memory    = "Arbeitsspeicher"
+tab_network   = "Netzwerk"
+tab_disks     = "Festplatten"
+tab_processes = "Prozesse"
+tab_gpu       = "GPU"
+menu_title    = "Menü"
+
+# ── Statusleiste (Tastenkürzel-Beschreibungen) ────────────────────────────────
+nav_right   = "Tab vorwärts"
+nav_left    = "Tab rückwärts"
+jump_to_tab = "Zu Tab springen"
+quit        = "Beenden"
+scroll_up   = "Hoch scrollen"
+scroll_down = "Runter scrollen"
+
+# ── Zeitachsenbeschriftungen (Verlaufsdiagramme) ──────────────────────────────
+ago_60s = "vor 60 s"
+ago_30s = "vor 30 s"
+now     = "jetzt"
+
+# ── CPU-Tab ───────────────────────────────────────────────────────────────────
+cpu_history_title = "CPU-Verlauf"
+cpu_dataset_label = "CPU %"
+
+# ── Arbeitsspeicher-Tab ───────────────────────────────────────────────────────
+mem_history_title = "Speicher-Verlauf"
+mem_dataset_label = "Speicher %"
+ram               = "RAM"
+swap              = "Swap"
+
+# ── Netzwerk-Tab ──────────────────────────────────────────────────────────────
+net_history_title    = "Netzwerk-Verlauf"
+net_throughput_title = "Aktueller Durchsatz"
+
+# ── Festplatten-Tab ───────────────────────────────────────────────────────────
+# Hinweis: Ein Scroll-Indikator (▲/▼) wird zur Laufzeit automatisch angehängt.
+disk_usage_title = "Festplattennutzung"
+
+# ── Prozesse-Tab ──────────────────────────────────────────────────────────────
+# Hinweis: Ein Scroll-Indikator wird zur Laufzeit automatisch angehängt.
+processes_title = "Prozesse (nach CPU sortiert)"
+col_pid         = "PID"
+col_name        = "Name"
+col_cpu_pct     = "CPU %"
+col_mem_kib     = "Speicher (KiB)"
+
+# ── GPU-Tab ───────────────────────────────────────────────────────────────────
+gpu_no_device = "Keine kompatible GPU erkannt.\n• AMD:    erfordert amdgpu-Kerneltreiber\n• NVIDIA: mit Option neu bauen: cargo build --features nvidia"
+gpu_util  = "Auslast."
+gpu_vram  = "VRAM"
+gpu_stats = "Statistik"
+gpu_temp  = "Temp.:"
+gpu_power = "Leist.:"
+# Wird angezeigt, wenn ein Sensorwert (Temperatur, Leistung) nicht verfügbar ist.
+na = "N/V"

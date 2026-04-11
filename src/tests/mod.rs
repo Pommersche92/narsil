@@ -40,3 +40,4 @@ mod processes;
 #[cfg(target_os = "linux")]
 mod gpu;
 mod split_gauge;
+mod i18n;

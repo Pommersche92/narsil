@@ -22,6 +22,9 @@ ratatui = "0.30"
 crossterm = { version = "0.29", features = ["event-stream"] }
 sysinfo = "0.38"
 anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+toml = { version = "0.8", default-features = false, features = ["parse"] }
+sys-locale = "0.3"
 nvml-wrapper = { version = "0.12", optional = true }
 
 [[bin]]

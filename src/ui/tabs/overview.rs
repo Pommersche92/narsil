@@ -48,5 +48,6 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     memory::draw_gauge(frame, app, chunks[1]);
     network::draw_sparklines(frame, app, chunks[2]);
     let proc_limit = (chunks[3].height as usize).saturating_sub(3);
-    processes::draw_table(frame, app, chunks[3], proc_limit, " Processes (sorted by CPU) ");
+    let proc_title = format!(" {} ", app.t.processes_title);
+    processes::draw_table(frame, app, chunks[3], proc_limit, &proc_title);
 }

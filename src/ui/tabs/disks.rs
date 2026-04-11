@@ -41,7 +41,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let can_up = scroll > 0;
     let can_down = scroll + visible < total;
     let indicator = scroll_indicator(can_up, can_down);
-    let title = format!(" Disk Usage{indicator} ");
+    let title = format!(" {}{indicator} ", app.t.disk_usage_title);
 
     let block = Block::default().title(title).borders(Borders::ALL);
     let inner = block.inner(area);

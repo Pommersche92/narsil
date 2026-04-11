@@ -37,15 +37,16 @@ use crate::app::App;
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let inv = Style::default().add_modifier(Modifier::REVERSED);
     let inv_bold = Style::default().add_modifier(Modifier::REVERSED | Modifier::BOLD);
+    let t = &app.t;
 
     let mut bindings: Vec<(&str, &str)> = vec![
-        ("Tab / → / l", "Navigate tabs right"),
-        ("Shift+Tab / ← / h", "Navigate tabs left"),
+        ("Tab / → / l", t.nav_right.as_str()),
+        ("Shift+Tab / ← / h", t.nav_left.as_str()),
         #[cfg(target_os = "linux")]
-        ("1-7", "Jump to tab"),
+        ("1-7", t.jump_to_tab.as_str()),
         #[cfg(not(target_os = "linux"))]
-        ("1-6", "Jump to tab"),
-        ("q / Ctrl-C", "Quit"),
+        ("1-6", t.jump_to_tab.as_str()),
+        ("q / Ctrl-C", t.quit.as_str()),
     ];
 
     #[cfg(target_os = "linux")]
@@ -53,7 +54,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     #[cfg(not(target_os = "linux"))]
     let scrollable_tab = matches!(app.selected_tab, 4 | 5);
     if scrollable_tab {
-        bindings.extend_from_slice(&[("↑ / k", "Scroll up"), ("↓ / j", "Scroll down")]);
+        bindings.extend_from_slice(&[("↑ / k", t.scroll_up.as_str()), ("↓ / j", t.scroll_down.as_str())]);
     }
 
     let mut spans: Vec<Span> = Vec::new();

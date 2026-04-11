@@ -1,0 +1,61 @@
+# Narsil — locale file
+# Language: English (en)
+
+# ── Tab bar ───────────────────────────────────────────────────────────────────
+tab_overview  = "Overview"
+tab_cpu       = "CPU"
+tab_memory    = "Memory"
+tab_network   = "Network"
+tab_disks     = "Disks"
+tab_processes = "Processes"
+tab_gpu       = "GPU"
+menu_title    = "Menu"
+
+# ── Status bar (keyboard shortcut descriptions) ───────────────────────────────
+nav_right   = "Navigate tabs right"
+nav_left    = "Navigate tabs left"
+jump_to_tab = "Jump to tab"
+quit        = "Quit"
+scroll_up   = "Scroll up"
+scroll_down = "Scroll down"
+
+# ── Time axis labels (used in history charts) ─────────────────────────────────
+ago_60s = "60s ago"
+ago_30s = "30s ago"
+now     = "now"
+
+# ── CPU tab ───────────────────────────────────────────────────────────────────
+cpu_history_title = "CPU Usage History"
+cpu_dataset_label = "CPU %"
+
+# ── Memory tab ────────────────────────────────────────────────────────────────
+mem_history_title = "Memory Usage History"
+mem_dataset_label = "Mem %"
+ram               = "RAM"
+swap              = "Swap"
+
+# ── Network tab ───────────────────────────────────────────────────────────────
+net_history_title   = "Network I/O History"
+net_throughput_title = "Current Throughput"
+
+# ── Disks tab ─────────────────────────────────────────────────────────────────
+# Note: a scroll indicator (▲/▼) is appended automatically at runtime.
+disk_usage_title = "Disk Usage"
+
+# ── Processes tab ─────────────────────────────────────────────────────────────
+# Note: a scroll indicator is appended automatically at runtime.
+processes_title = "Processes (sorted by CPU)"
+col_pid         = "PID"
+col_name        = "Name"
+col_cpu_pct     = "CPU %"
+col_mem_kib     = "Mem (KiB)"
+
+# ── GPU tab ───────────────────────────────────────────────────────────────────
+gpu_no_device = "No compatible GPU detected.\n• AMD:    requires amdgpu kernel driver\n• NVIDIA: rebuild with: cargo build --features nvidia"
+gpu_util  = "Util"
+gpu_vram  = "VRAM"
+gpu_stats = "Stats"
+gpu_temp  = "Temp:"
+gpu_power = "Pow:"
+# Shown when a sensor value (temperature, power) is unavailable.
+na = "N/A"

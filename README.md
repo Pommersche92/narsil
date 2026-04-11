@@ -164,6 +164,36 @@ cargo build --release --features nvidia
 
 ---
 
+## 🌍 Localisation
+
+narsil ships with translations for four languages. The UI language is selected automatically from the OS locale and can be overridden at startup.
+
+| Language | Code | Auto-detected from |
+|----------|------|--------------------|
+| English  | `en` | default fallback |
+| German   | `de` | `LANG=de_DE.UTF-8`, `LANGUAGE=de`, … |
+| French   | `fr` | `LANG=fr_FR.UTF-8`, `LANGUAGE=fr`, … |
+| Spanish  | `es` | `LANG=es_ES.UTF-8`, `LANGUAGE=es`, … |
+
+### Detection priority
+
+1. `--lang <code>` CLI flag
+2. `LANGUAGE` environment variable (colon-separated preference list, GNU extension)
+3. `LC_ALL` → `LC_MESSAGES` → `LANG`
+4. Native OS locale API (`GetUserDefaultLocaleName` on Windows, `CFLocale` on macOS)
+5. English fallback
+
+```bash
+narsil --lang de    # force German
+narsil --lang fr    # force French
+```
+
+### Adding a new language
+
+Translation strings live in plain TOML files under `locales/` — no Rust knowledge needed to translate. See [locales/README.md](locales/README.md) for step-by-step instructions.
+
+---
+
 ## 🏗️ Architecture
 
 ```
@@ -292,6 +322,7 @@ Items are loosely ordered by priority.
 | Per-char label inversion | ❌ | ❌ | ❌ | **✅** |
 | Disk usage bars | ❌ | ❌ | ✅ | **✅** |
 | Status bar with keybindings | ❌ | ❌ | ❌ | **✅** |
+| Localised UI | ❌ | ❌ | ❌ | **✅ EN DE FR ES** |
 | Log tail panel | ❌ | ❌ | ❌ | 🗓️ planned |
 | Alert rules | ❌ | ❌ | ❌ | 🗓️ planned |
 | Remote mode | ❌ | ❌ | ❌ | 🗓️ planned |

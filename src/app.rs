@@ -23,6 +23,7 @@ use sysinfo::System;
 #[cfg(all(target_os = "linux", feature = "nvidia"))]
 use nvml_wrapper::Nvml;
 
+use crate::i18n::{Translations, get_translations};
 use crate::metrics::{
     cpu, disks, memory, network, processes,
     CpuState, DiskState, MemState, NetState, ProcessEntry,
@@ -64,12 +65,15 @@ pub struct App {
     /// Initialised NVML handle, or `None` if NVML is unavailable at runtime.
     #[cfg(all(target_os = "linux", feature = "nvidia"))]
     pub(crate) nvml: Option<Nvml>,
+    /// Active UI translation table.
+    pub t: Translations,
 }
 
 impl App {
-    /// Creates a new [`App`], performs an initial full system refresh, and —
-    /// when the `nvidia` feature is enabled — attempts to initialise NVML.
-    pub fn new() -> Self {
+    /// Creates a new [`App`] for the given ISO 639-1 language code, performs
+    /// an initial full system refresh, and — when the `nvidia` feature is
+    /// enabled — attempts to initialise NVML.
+    pub fn new(lang_code: &str) -> Self {
         let mut sys = System::new_all();
         sys.refresh_all();
 
@@ -92,6 +96,7 @@ impl App {
             gpu_scroll: 0,
             #[cfg(all(target_os = "linux", feature = "nvidia"))]
             nvml: Nvml::init().ok(),
+            t: get_translations(lang_code),
         }
     }
 

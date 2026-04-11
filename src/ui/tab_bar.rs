@@ -28,40 +28,42 @@ use ratatui::{
 
 use crate::app::App;
 
-#[cfg(target_os = "linux")]
-const TAB_TITLES: &[&str] = &[
-    "Overview [1]",
-    "CPU [2]",
-    "Memory [3]",
-    "Network [4]",
-    "Disks [5]",
-    "Processes [6]",
-    "GPU [7]",
-];
-
-#[cfg(not(target_os = "linux"))]
-const TAB_TITLES: &[&str] = &[
-    "Overview [1]",
-    "CPU [2]",
-    "Memory [3]",
-    "Network [4]",
-    "Disks [5]",
-    "Processes [6]",
-];
-
 /// Renders the tab-navigation bar in `area`, highlighting the tab at index
 /// [`App::selected_tab`].
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
-    let titles: Vec<Line> = TAB_TITLES
-        .iter()
-        .map(|t| Line::from(Span::styled(*t, Style::default().fg(Color::White))))
+    let t = &app.t;
+
+    #[cfg(target_os = "linux")]
+    let titles_raw = vec![
+        format!("{} [1]", t.tab_overview),
+        format!("{} [2]", t.tab_cpu),
+        format!("{} [3]", t.tab_memory),
+        format!("{} [4]", t.tab_network),
+        format!("{} [5]", t.tab_disks),
+        format!("{} [6]", t.tab_processes),
+        format!("{} [7]", t.tab_gpu),
+    ];
+
+    #[cfg(not(target_os = "linux"))]
+    let titles_raw = vec![
+        format!("{} [1]", t.tab_overview),
+        format!("{} [2]", t.tab_cpu),
+        format!("{} [3]", t.tab_memory),
+        format!("{} [4]", t.tab_network),
+        format!("{} [5]", t.tab_disks),
+        format!("{} [6]", t.tab_processes),
+    ];
+
+    let titles: Vec<Line> = titles_raw
+        .into_iter()
+        .map(|s| Line::from(Span::styled(s, Style::default().fg(Color::White))))
         .collect();
 
     let tabs = Tabs::new(titles)
         .block(
             Block::default()
                 .title(Span::styled(
-                    " MENU ",
+                    format!(" {} ", t.menu_title),
                     Style::default()
                         .fg(Color::Cyan)
                         .add_modifier(Modifier::BOLD),

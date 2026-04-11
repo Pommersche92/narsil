@@ -48,7 +48,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
         .collect();
 
     let datasets = vec![Dataset::default()
-        .name("Mem %")
+        .name(app.t.mem_dataset_label.as_str())
         .marker(symbols::Marker::Braille)
         .graph_type(GraphType::Line)
         .style(Style::default().fg(Color::Green))
@@ -58,7 +58,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .title(Span::styled(
-                    " Memory Usage History ",
+                    format!(" {} ", app.t.mem_history_title),
                     Style::default().fg(Color::Green),
                 ))
                 .borders(Borders::ALL),
@@ -67,9 +67,9 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
             Axis::default()
                 .bounds([0.0, HISTORY_LEN as f64])
                 .labels(vec![
-                    Span::raw("60s ago"),
-                    Span::raw("30s ago"),
-                    Span::raw("now"),
+                    Span::raw(app.t.ago_60s.as_str()),
+                    Span::raw(app.t.ago_30s.as_str()),
+                    Span::raw(app.t.now.as_str()),
                 ]),
         )
         .y_axis(
@@ -107,7 +107,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     )
     .block(
         Block::default()
-            .title(format!(" RAM  {used_gb:.1} / {total_gb:.1} GiB "))
+            .title(format!(" {}  {used_gb:.1} / {total_gb:.1} GiB ", app.t.ram))
             .borders(Borders::ALL),
     );
 
@@ -118,7 +118,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     )
     .block(
         Block::default()
-            .title(format!(" Swap  {swap_used_gb:.1} / {swap_total_gb:.1} GiB "))
+            .title(format!(" {}  {swap_used_gb:.1} / {swap_total_gb:.1} GiB ", app.t.swap))
             .borders(Borders::ALL),
     );
 
@@ -144,7 +144,8 @@ pub fn draw_gauge(frame: &mut Frame, app: &App, area: Rect) {
     .block(
         Block::default()
             .title(format!(
-                " RAM  {:.1}/{:.1} GiB  ({:.1}%) ",
+                " {}  {:.1}/{:.1} GiB  ({:.1}%) ",
+                app.t.ram,
                 used_gb,
                 total_gb,
                 pct * 100.0

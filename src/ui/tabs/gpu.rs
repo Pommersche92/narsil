@@ -29,6 +29,7 @@ use ratatui::{
 };
 
 use crate::app::App;
+use crate::i18n::Translations;
 use crate::metrics::{GpuEntry, HISTORY_LEN};
 use crate::ui::helpers::{scroll_indicator, usage_color};
 use crate::ui::widgets::SplitGauge;
@@ -41,12 +42,8 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     const ITEM_H: u16 = 12;
 
     if app.gpus.is_empty() {
-        let msg = Paragraph::new(
-            "No compatible GPU detected.\n\
-             • AMD:    requires amdgpu kernel driver\n\
-             • NVIDIA: rebuild with: cargo build --features nvidia",
-        )
-        .block(Block::default().title(" GPU ").borders(Borders::ALL));
+        let msg = Paragraph::new(app.t.gpu_no_device.as_str())
+            .block(Block::default().title(" GPU ").borders(Borders::ALL));
         frame.render_widget(msg, area);
         return;
     }
@@ -59,7 +56,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let can_up = scroll > 0;
     let can_down = scroll + visible < total;
     let indicator = scroll_indicator(can_up, can_down);
-    let title = format!(" GPU{indicator} ");
+    let title = format!("{}{indicator} ", app.t.tab_gpu);
 
     let block = Block::default().title(title).borders(Borders::ALL);
     let inner = block.inner(area);
@@ -81,7 +78,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
         .split(inner);
 
     for (i, gpu) in app.gpus.iter().skip(scroll).take(count).enumerate() {
-        draw_card(frame, gpu, rows[i]);
+        draw_card(frame, gpu, rows[i], &app.t);
     }
 }
 
@@ -90,7 +87,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
 /// Layout:
 /// - Top half: utilisation history chart (left) + VRAM history chart (right)
 /// - Bottom row: util gauge | VRAM gauge | temperature/power stats
-pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
+pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect, t: &Translations) {
     let block = Block::default()
         .title(format!(" {} ", gpu.name))
         .borders(Borders::ALL);
@@ -121,7 +118,7 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
         .data(&util_data)])
     .block(
         Block::default()
-            .title(format!(" GPU  {:.0}% ", gpu.utilization))
+            .title(format!("{} {:.0}% ", t.tab_gpu, gpu.utilization))
             .borders(Borders::ALL),
     )
     .x_axis(Axis::default().bounds([0.0, HISTORY_LEN as f64]))
@@ -148,7 +145,7 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
         .data(&mem_data)])
     .block(
         Block::default()
-            .title(format!(" VRAM  {:.1}/{:.1} GiB ", mem_used_gb, mem_total_gb))
+            .title(format!(" {} {:.1}/{:.1} GiB ", t.gpu_vram, mem_used_gb, mem_total_gb))
             .borders(Borders::ALL),
     )
     .x_axis(Axis::default().bounds([0.0, HISTORY_LEN as f64]))
@@ -174,7 +171,7 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
         usage_color(gpu.utilization),
         format!("{:.0}%", gpu.utilization),
     )
-    .block(Block::default().title(" Util ").borders(Borders::ALL));
+    .block(Block::default().title(format!(" {} ", t.gpu_util)).borders(Borders::ALL));
     frame.render_widget(util_gauge, bottom[0]);
 
     let mem_pct = if gpu.mem_total > 0 {
@@ -187,23 +184,23 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect) {
         Color::Magenta,
         format!("{:.0}%", mem_pct * 100.0),
     )
-    .block(Block::default().title(" VRAM ").borders(Borders::ALL));
+    .block(Block::default().title(format!(" {} ", t.gpu_vram)).borders(Borders::ALL));
     frame.render_widget(mem_gauge, bottom[1]);
 
     let temp_str = gpu
         .temperature
-        .map(|t| format!("{t}°C"))
-        .unwrap_or_else(|| "N/A".into());
+        .map(|t_val| format!("{t_val}°C"))
+        .unwrap_or_else(|| t.na.clone());
     let power_str = gpu
         .power_watts
         .map(|p| format!("{p:.0}W"))
-        .unwrap_or_else(|| "N/A".into());
+        .unwrap_or_else(|| t.na.clone());
     let stats = Paragraph::new(Line::from(vec![
-        Span::styled(" Temp: ", Style::default().fg(Color::Yellow)),
+        Span::styled(format!(" {} ", t.gpu_temp), Style::default().fg(Color::Yellow)),
         Span::raw(temp_str),
-        Span::styled("  Pow: ", Style::default().fg(Color::Yellow)),
+        Span::styled(format!("  {} ", t.gpu_power), Style::default().fg(Color::Yellow)),
         Span::raw(power_str),
     ]))
-    .block(Block::default().title(" Stats ").borders(Borders::ALL));
+    .block(Block::default().title(format!(" {} ", t.gpu_stats)).borders(Borders::ALL));
     frame.render_widget(stats, bottom[2]);
 }

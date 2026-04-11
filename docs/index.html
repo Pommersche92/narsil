@@ -30,6 +30,7 @@
     <li><a href="#features">Features</a></li>
     <li><a href="#install">Install</a></li>
     <li><a href="#gpu">GPU</a></li>
+    <li><a href="#i18n">Languages</a></li>
     <li><a href="#comparison">Compare</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="https://github.com/Pommersche92/narsil" target="_blank" rel="noopener">GitHub ↗</a></li>
@@ -76,6 +77,7 @@
     <span class="badge">ratatui</span>
     <span class="badge">AMD + NVIDIA GPU (Linux)</span>
     <span class="badge">Linux &middot; Windows &middot; macOS</span>
+    <span class="badge">🌍 EN &middot; DE &middot; FR &middot; ES</span>
     <span class="badge">GPL-3.0</span>
   </div>
 </section>
@@ -156,7 +158,12 @@
         <p class="feat-desc">Pass <code>--interval &lt;ms&gt;</code> to tune between low-latency and low-CPU usage. Defaults to 1 000 ms. Key events are processed between ticks with zero busy-waiting — swift and silent as a ranger.</p>
         <span class="feat-tag"><code>--interval &lt;ms&gt;</code></span>
       </div>
-
+      <div class="feat-card fade-in-up">
+        <span class="feat-icon">🌍</span>
+        <h3 class="feat-title">Multilingual UI</h3>
+        <p class="feat-desc">English, German, French, and Spanish built in. Language is auto-detected from the OS locale (<code>LANG</code>, <code>LANGUAGE</code>, native API) and overridable with <code>--lang de</code>. Translations are plain TOML files — adding a new language requires no Rust knowledge.</p>
+        <span class="feat-tag"><code>--lang &lt;code&gt;</code></span>
+      </div>
     </div>
   </div>
 </section>
@@ -493,8 +500,58 @@
 </section>
 
 
-<div class="container">
-  <div class="divider fade-in-up"><span class="divider-rune">✦ ᚨ ✦</span></div>
+<div class="container">  <div class="divider fade-in-up"><span class="divider-rune">❖ ᚪ ❖</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     I18N
+══════════════════════════════════════════════════════ -->
+<section id="i18n">
+  <div class="container">
+
+    <div class="s-header fade-in-up">
+      <p class="s-eyebrow">Speak Every Tongue of Middle-earth</p>
+      <h2 class="s-title">Multilingual UI</h2>
+      <p class="s-desc">narsil detects your OS language automatically and renders the entire interface in your tongue. Pass <code>--lang &lt;code&gt;</code> to override. Translations are plain TOML files — adding a new language needs no Rust knowledge.</p>
+    </div>
+
+    <div class="keys-grid fade-in-up" style="max-width:36rem;margin:0 auto 1.5rem">
+      <div class="key-row"><kbd>en</kbd><span class="key-desc">English &mdash; default fallback</span></div>
+      <div class="key-row"><kbd>de</kbd><span class="key-desc">Deutsch &mdash; German</span></div>
+      <div class="key-row"><kbd>fr</kbd><span class="key-desc">Fran&ccedil;ais &mdash; French</span></div>
+      <div class="key-row"><kbd>es</kbd><span class="key-desc">Espa&ntilde;ol &mdash; Spanish</span></div>
+    </div>
+
+    <div class="features-grid fade-in-up" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;max-width:50rem;margin:0 auto">
+      <div class="feat-card">
+        <span class="feat-icon">🤖</span>
+        <div>
+          <h3 class="feat-title">Auto-detection</h3>
+          <p class="feat-desc">Reads <code>LANGUAGE</code>, <code>LC_ALL</code>, <code>LC_MESSAGES</code>, <code>LANG</code> in order, then falls back to the native OS locale API (<code>GetUserDefaultLocaleName</code> on Windows, <code>CFLocale</code> on macOS).</p>
+        </div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🛠️</span>
+        <div>
+          <h3 class="feat-title">CLI Override</h3>
+          <p class="feat-desc">Force any language at startup: <code>narsil --lang de</code>. Unknown codes fall back to English silently &mdash; no crash, no complaint.</p>
+        </div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📝</span>
+        <div>
+          <h3 class="feat-title">Translator-friendly</h3>
+          <p class="feat-desc">Strings are plain <code>key = "value"</code> TOML. No Rust, no recompile for the translator. One binary ships all languages &mdash; no language-specific builds.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="container">  <div class="divider fade-in-up"><span class="divider-rune">✦ ᚨ ✦</span></div>
 </div>
 
 
@@ -556,6 +613,11 @@
             <td>Keybinding status bar</td>
             <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
             <td class="chk">✓</td>
+          </tr>
+          <tr>
+            <td>Localised UI</td>
+            <td class="crss">✗</td><td class="crss">✗</td><td class="crss">✗</td>
+            <td class="chk">EN DE FR ES</td>
           </tr>
           <tr>
             <td>Log tail panel</td>

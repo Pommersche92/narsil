@@ -1,0 +1,61 @@
+# Narsil — archivo de configuración regional
+# Idioma: Español (es)
+
+# ── Barra de pestañas ─────────────────────────────────────────────────────────
+tab_overview  = "Resumen"
+tab_cpu       = "CPU"
+tab_memory    = "Memoria"
+tab_network   = "Red"
+tab_disks     = "Discos"
+tab_processes = "Procesos"
+tab_gpu       = "GPU"
+menu_title    = "Menú"
+
+# ── Barra de estado (descripciones de atajos de teclado) ──────────────────────
+nav_right   = "Pestaña siguiente"
+nav_left    = "Pestaña anterior"
+jump_to_tab = "Ir a pestaña"
+quit        = "Salir"
+scroll_up   = "Desplazar arriba"
+scroll_down = "Desplazar abajo"
+
+# ── Etiquetas del eje de tiempo (gráficos de historial) ───────────────────────
+ago_60s = "hace 60 s"
+ago_30s = "hace 30 s"
+now     = "ahora"
+
+# ── Pestaña CPU ───────────────────────────────────────────────────────────────
+cpu_history_title = "Historial de CPU"
+cpu_dataset_label = "CPU %"
+
+# ── Pestaña Memoria ───────────────────────────────────────────────────────────
+mem_history_title = "Historial de memoria"
+mem_dataset_label = "Mem. %"
+ram               = "RAM"
+swap              = "Swap"
+
+# ── Pestaña Red ───────────────────────────────────────────────────────────────
+net_history_title    = "Historial de red"
+net_throughput_title = "Rendimiento actual"
+
+# ── Pestaña Discos ────────────────────────────────────────────────────────────
+# Nota: se añade automáticamente un indicador de desplazamiento (▲/▼).
+disk_usage_title = "Uso de disco"
+
+# ── Pestaña Procesos ──────────────────────────────────────────────────────────
+# Nota: se añade automáticamente un indicador de desplazamiento.
+processes_title = "Procesos (ordenados por CPU)"
+col_pid         = "PID"
+col_name        = "Nombre"
+col_cpu_pct     = "CPU %"
+col_mem_kib     = "Mem. (KiB)"
+
+# ── Pestaña GPU ───────────────────────────────────────────────────────────────
+gpu_no_device = "No se detectó GPU compatible.\n• AMD:    requiere el controlador del kernel amdgpu\n• NVIDIA: recompile con: cargo build --features nvidia"
+gpu_util  = "Util."
+gpu_vram  = "VRAM"
+gpu_stats = "Stats"
+gpu_temp  = "Temp.:"
+gpu_power = "Pot.:"
+# Se muestra cuando un valor de sensor (temperatura, potencia) no está disponible.
+na = "N/D"

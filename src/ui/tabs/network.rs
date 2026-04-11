@@ -80,7 +80,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .title(Span::styled(
-                    " Network I/O History ",
+                    format!(" {} ", app.t.net_history_title),
                     Style::default().fg(Color::Cyan),
                 ))
                 .borders(Borders::ALL),
@@ -89,9 +89,9 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
             Axis::default()
                 .bounds([0.0, HISTORY_LEN as f64])
                 .labels(vec![
-                    Span::raw("60s ago"),
-                    Span::raw("30s ago"),
-                    Span::raw("now"),
+                    Span::raw(app.t.ago_60s.as_str()),
+                    Span::raw(app.t.ago_30s.as_str()),
+                    Span::raw(app.t.now.as_str()),
                 ]),
         )
         .y_axis(
@@ -118,7 +118,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     ])
     .block(
         Block::default()
-            .title(" Current Throughput ")
+            .title(format!(" {} ", app.t.net_throughput_title))
             .borders(Borders::ALL),
     );
 

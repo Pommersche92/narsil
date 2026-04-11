@@ -92,7 +92,7 @@ pub fn draw_chart(frame: &mut Frame, app: &App, area: Rect) {
         .collect();
 
     let datasets = vec![Dataset::default()
-        .name("CPU %")
+        .name(app.t.cpu_dataset_label.as_str())
         .marker(symbols::Marker::Braille)
         .graph_type(GraphType::Line)
         .style(Style::default().fg(Color::Cyan))
@@ -102,7 +102,7 @@ pub fn draw_chart(frame: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .title(Span::styled(
-                    " CPU Usage History ",
+                    format!(" {} ", app.t.cpu_history_title),
                     Style::default().fg(Color::Cyan),
                 ))
                 .borders(Borders::ALL),
@@ -111,9 +111,9 @@ pub fn draw_chart(frame: &mut Frame, app: &App, area: Rect) {
             Axis::default()
                 .bounds([0.0, HISTORY_LEN as f64])
                 .labels(vec![
-                    Span::raw("60s ago"),
-                    Span::raw("30s ago"),
-                    Span::raw("now"),
+                    Span::raw(app.t.ago_60s.as_str()),
+                    Span::raw(app.t.ago_30s.as_str()),
+                    Span::raw(app.t.now.as_str()),
                 ]),
         )
         .y_axis(
