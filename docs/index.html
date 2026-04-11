@@ -419,17 +419,17 @@
         <span class="gpu-label ok">Fully Supported</span>
       </div>
 
-      <div class="gpu-card warn fade-in-up">
+      <div class="gpu-card ok fade-in-up">
         <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD APU / iGPU"></div>
         <div class="gpu-name">AMD APU / iGPU</div>
         <div class="gpu-driver">amdgpu kernel driver</div>
         <div class="chips">
           <span class="chip ok">Utilisation</span>
-          <span class="chip warn">GTT Memory</span>
+          <span class="chip ok">GTT Memory</span>
           <span class="chip ok">Temperature</span>
           <span class="chip ok">Power</span>
         </div>
-        <span class="gpu-label warn">Supported (GTT)</span>
+        <span class="gpu-label ok">Fully Supported</span>
       </div>
 
       <div class="gpu-card ok fade-in-up">
@@ -461,7 +461,7 @@
     </div>
 
     <p class="gpu-footnote fade-in-up">
-      AMD APU VRAM values reflect GTT — system RAM dynamically shared with the GPU. The numbers are accurate; dedicated-vs-shared label disambiguation is planned.
+      AMD APU memory figures reflect GTT — system RAM dynamically shared with the GPU. narsil detects this automatically and labels the memory panel <strong>GTT</strong> instead of VRAM.
     </p>
 
   </div>
@@ -663,7 +663,7 @@
       <div class="rm-col fade-in-up">
         <h3>🔜 Near-term</h3>
         <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🔵 Intel GPU support via i915 / xe sysfs and hwmon</div></div>
-        <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🏷️ AMD APU label fix — distinguish GTT from dedicated VRAM</div></div>
+        <div class="rm-item done"><div class="rm-dot done"></div><div class="rm-text done-text">🏷️ AMD APU label fix — GTT vs dedicated VRAM, auto-detected and labelled correctly</div><span class="rm-done-tag" aria-label="Done">DONE</span></div>
         <div class="rm-item done"><div class="rm-dot done"></div><div class="rm-text done-text">⏱️ Configurable refresh rate via <code>--interval &lt;ms&gt;</code></div><span class="rm-done-tag" aria-label="Done">DONE</span></div>
         <div class="rm-item"><div class="rm-dot near"></div><div class="rm-text">🎨 Built-in colour themes — dark, light, high-contrast</div></div>
       </div>

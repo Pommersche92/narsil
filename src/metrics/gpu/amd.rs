@@ -65,14 +65,32 @@ pub fn refresh(gpus: &mut Vec<GpuEntry>) {
             .ok()
             .and_then(|s| s.trim().parse::<f32>().ok())
             .unwrap_or(0.0);
-        let mem_used = fs::read_to_string(dev.join("mem_info_vram_used"))
+
+        // Prefer dedicated VRAM (discrete card). When `mem_info_vram_total`
+        // is zero the GPU is an APU whose frame buffer lives entirely in
+        // system RAM; fall back to the GTT pool and flag it accordingly.
+        let vram_total = fs::read_to_string(dev.join("mem_info_vram_total"))
             .ok()
             .and_then(|s| s.trim().parse::<u64>().ok())
             .unwrap_or(0);
-        let mem_total = fs::read_to_string(dev.join("mem_info_vram_total"))
-            .ok()
-            .and_then(|s| s.trim().parse::<u64>().ok())
-            .unwrap_or(0);
+        let (mem_used, mem_total, mem_is_gtt) = if vram_total > 0 {
+            let vram_used = fs::read_to_string(dev.join("mem_info_vram_used"))
+                .ok()
+                .and_then(|s| s.trim().parse::<u64>().ok())
+                .unwrap_or(0);
+            (vram_used, vram_total, false)
+        } else {
+            let gtt_used = fs::read_to_string(dev.join("mem_info_gtt_used"))
+                .ok()
+                .and_then(|s| s.trim().parse::<u64>().ok())
+                .unwrap_or(0);
+            let gtt_total = fs::read_to_string(dev.join("mem_info_gtt_total"))
+                .ok()
+                .and_then(|s| s.trim().parse::<u64>().ok())
+                .unwrap_or(0);
+            (gtt_used, gtt_total, true)
+        };
+
         let temperature = hwmon_temp(&dev);
         let power_watts = hwmon_power(&dev);
 
@@ -80,6 +98,7 @@ pub fn refresh(gpus: &mut Vec<GpuEntry>) {
         gpu.utilization = utilization;
         gpu.mem_used = mem_used;
         gpu.mem_total = mem_total;
+        gpu.mem_is_gtt = mem_is_gtt;
         gpu.temperature = temperature;
         gpu.power_watts = power_watts;
         push_history(&mut gpu.util_history, utilization);

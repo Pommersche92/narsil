@@ -151,6 +151,7 @@ pub struct Translations {
     pub gpu_no_device: String,
     pub gpu_util: String,
     pub gpu_vram: String,
+    pub gpu_gtt: String,
     pub gpu_stats: String,
     pub gpu_temp: String,
     pub gpu_power: String,

@@ -138,12 +138,12 @@ cargo build --release --features nvidia
 | Vendor | Driver | Detected | Utilisation | Memory | Temperature | Power |
 |--------|--------|----------|-------------|--------|-------------|-------|
 | 🔴 AMD discrete | `amdgpu` | ✅ | ✅ `gpu_busy_percent` | ✅ VRAM | ✅ hwmon | ✅ hwmon |
-| 🔴 AMD iGPU (APU) | `amdgpu` | ✅ | ✅ | ⚠️ GTT (shared RAM) | ✅ | ✅ |
+| 🔴 AMD iGPU (APU) | `amdgpu` | ✅ | ✅ | ✅ GTT (shared RAM) | ✅ | ✅ |
 | 🟢 NVIDIA | proprietary + `--features nvidia` | ✅ | ✅ NVML | ✅ NVML | ✅ NVML | ✅ NVML |
 | 🔵 Intel iGPU | `i915` / `xe` | ❌ | — | — | — | — |
 | 🔵 Intel Arc discrete | `xe` | ❌ | — | — | — | — |
 
-> ⚠️ **AMD APU note**: the VRAM figures reflect GTT memory (system RAM dynamically assigned to the GPU), not dedicated video memory. The values are accurate but on-screen labels will stay as "VRAM" until the display is updated in a future release.
+> ✅ **AMD APU note**: VRAM figures for APUs reflect GTT memory (system RAM dynamically assigned to the GPU). narsil detects this automatically and labels the memory panel **GTT** rather than VRAM.
 
 > 🗓️ **Intel note**: Intel GPU support is planned — see Roadmap below.
 
@@ -257,8 +257,9 @@ cargo test
 | `tests::network` | `NetState::new` zeroed state; `refresh` history cap & rate consistency |
 | `tests::disks` | `DiskState` field storage; `refresh` non-empty result, `used ≤ total`, non-empty names/mounts |
 | `tests::processes` | `ProcessEntry` field storage; `refresh` ≤ 100 entries, CPU-descending sort, non-empty names |
-| `tests::gpu` | `GpuEntry::new` zeroed fields, history lengths; `amd::refresh` smoke test & invariants | Linux only |
+| `tests::gpu` | `GpuEntry::new` zeroed fields, `mem_is_gtt` initial value, history lengths; `amd::refresh` smoke test & invariants | Linux only |
 | `tests::split_gauge` | Ratio clamping, full/empty/half fill, label centring, block inner area, zero-size no-panic |
+| `tests::i18n` | `primary_code` subtag parsing, `is_bundled` case-insensitive lookup, `get_translations` for all 4 locales + region qualifiers + unknown fallback, all fields non-empty, parse no-panic, `detect_lang_code` smoke test |
 
 ### Running with NVIDIA feature
 
@@ -287,7 +288,7 @@ Items are loosely ordered by priority.
 ### 🔜 Near-term
 
 - 🔵 **Intel GPU support** — utilisation via GT frequency ratio (`i915`/`xe` sysfs), LMEM for Intel Arc cards, temperature via hwmon; shown with appropriate caveats for iGPUs
-- 🏷️ **AMD APU label fix** — distinguish GTT (shared) from dedicated VRAM and label accordingly
+- ~~🏷️ **AMD APU label fix** — distinguish GTT (shared) from dedicated VRAM and label accordingly~~ ✅
 - ~~⏱️ **Configurable refresh rate** — CLI flag `--interval <ms>` to tune between low-latency and low-CPU usage~~ ✅
 - 🎨 **Colour themes** — built-in dark/light/high-contrast theme switcher
 

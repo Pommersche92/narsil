@@ -88,6 +88,8 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
 /// - Top half: utilisation history chart (left) + VRAM history chart (right)
 /// - Bottom row: util gauge | VRAM gauge | temperature/power stats
 pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect, t: &Translations) {
+    let mem_label = if gpu.mem_is_gtt { t.gpu_gtt.as_str() } else { t.gpu_vram.as_str() };
+
     let block = Block::default()
         .title(format!(" {} ", gpu.name))
         .borders(Borders::ALL);
@@ -145,7 +147,7 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect, t: &Translations
         .data(&mem_data)])
     .block(
         Block::default()
-            .title(format!(" {} {:.1}/{:.1} GiB ", t.gpu_vram, mem_used_gb, mem_total_gb))
+            .title(format!(" {} {:.1}/{:.1} GiB ", mem_label, mem_used_gb, mem_total_gb))
             .borders(Borders::ALL),
     )
     .x_axis(Axis::default().bounds([0.0, HISTORY_LEN as f64]))
@@ -184,7 +186,7 @@ pub fn draw_card(frame: &mut Frame, gpu: &GpuEntry, area: Rect, t: &Translations
         Color::Magenta,
         format!("{:.0}%", mem_pct * 100.0),
     )
-    .block(Block::default().title(format!(" {} ", t.gpu_vram)).borders(Borders::ALL));
+    .block(Block::default().title(format!(" {} ", mem_label)).borders(Borders::ALL));
     frame.render_widget(mem_gauge, bottom[1]);
 
     let temp_str = gpu

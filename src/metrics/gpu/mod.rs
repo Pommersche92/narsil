@@ -33,17 +33,20 @@ pub struct GpuEntry {
     pub name: String,
     /// 3D/compute engine load (0.0–100.0 %).
     pub utilization: f32,
-    /// VRAM currently allocated, in bytes.
+    /// Memory currently allocated, in bytes.
     pub mem_used: u64,
-    /// Total available VRAM, in bytes.
+    /// Total available memory, in bytes.
     pub mem_total: u64,
+    /// When `true` the memory figures come from the GTT pool (shared system
+    /// RAM used by an AMD APU) rather than dedicated on-board VRAM.
+    pub mem_is_gtt: bool,
     /// Die temperature in °C, if the driver exposes it.
     pub temperature: Option<u32>,
     /// Power draw in watts, if the driver exposes it.
     pub power_watts: Option<f32>,
     /// 60-sample rolling history of [`utilization`][GpuEntry::utilization].
     pub util_history: Vec<f32>,
-    /// 60-sample rolling history of VRAM utilisation percentage.
+    /// 60-sample rolling history of memory utilisation percentage.
     pub mem_history: Vec<f32>,
 }
 
@@ -55,6 +58,7 @@ impl GpuEntry {
             utilization: 0.0,
             mem_used: 0,
             mem_total: 0,
+            mem_is_gtt: false,
             temperature: None,
             power_watts: None,
             util_history: vec![0.0; HISTORY_LEN],

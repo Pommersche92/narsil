@@ -43,6 +43,14 @@ fn test_gpu_entry_new_numeric_fields_are_zero() {
     assert_eq!(entry.mem_total, 0);
 }
 
+/// `mem_is_gtt` is `false` after construction — assumes dedicated VRAM until
+/// the first AMD sysfs refresh determines otherwise.
+#[test]
+fn test_gpu_entry_new_mem_is_gtt_is_false() {
+    let entry = GpuEntry::new("test".to_string());
+    assert!(!entry.mem_is_gtt, "mem_is_gtt should be false on construction");
+}
+
 /// Optional sensor fields are `None` after construction (no driver data yet).
 #[test]
 fn test_gpu_entry_new_optional_fields_are_none() {
