@@ -49,6 +49,21 @@ fn test_primary_code_all_suffixes() {
     assert_eq!(primary_code("de_DE.UTF-8@euro"), "de");
 }
 
+/// Windows and macOS return BCP 47 tags with hyphens, e.g. `"de-DE"`.
+#[test]
+fn test_primary_code_bcp47_hyphen() {
+    assert_eq!(primary_code("de-DE"), "de");
+    assert_eq!(primary_code("en-US"), "en");
+    assert_eq!(primary_code("fr-FR"), "fr");
+}
+
+/// `get_translations` resolves a BCP 47 locale string correctly.
+#[test]
+fn test_get_translations_bcp47_hyphen() {
+    let t = get_translations("de-DE");
+    assert_eq!(t.tab_memory, "Arbeitsspeicher");
+}
+
 // ── is_bundled ────────────────────────────────────────────────────────────────────────────────────
 
 #[test]

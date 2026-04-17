@@ -43,9 +43,10 @@ static LOCALES: &[(&str, &str)] = &[
 ];
 
 /// Extracts the primary language subtag from a locale string.
-/// `"de_DE.UTF-8"` → `"de"`, `"fr"` → `"fr"`.
+/// Handles both POSIX-style (`"de_DE.UTF-8"`) and BCP 47 (`"de-DE"`) formats.
+/// `"de_DE.UTF-8"` → `"de"`, `"de-DE"` → `"de"`, `"fr"` → `"fr"`.
 pub(crate) fn primary_code(locale: &str) -> &str {
-    locale.split(['_', '.', '@']).next().unwrap_or(locale)
+    locale.split(['-', '_', '.', '@']).next().unwrap_or(locale)
 }
 
 /// Returns `true` if `code` matches a locale compiled into this binary.
