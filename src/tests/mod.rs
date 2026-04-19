@@ -37,7 +37,7 @@ mod memory;
 mod network;
 mod disks;
 mod processes;
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "windows"))]
 mod gpu;
 mod split_gauge;
 mod i18n;

@@ -16,14 +16,21 @@
 //! Tests for [`crate::metrics::gpu`].
 //!
 //! Covers: [`GpuEntry::new`] zeroed initial state, correct name storage, and
-//! history vector dimensions. Also contains a smoke test for
-//! [`crate::metrics::gpu::amd::refresh`] (no AMD hardware is required — if
-//! `/sys/class/drm` is absent the function returns immediately without error).
+//! history vector dimensions. Also contains smoke tests for the platform-
+//! specific refresh backends:
+//! - [`crate::metrics::gpu::amd::refresh`] on Linux (no AMD hardware required)
+//! - [`crate::metrics::gpu::windows_amd::refresh`] on Windows (no AMD hardware required)
 
 use crate::metrics::{
-    gpu::{amd, GpuEntry},
+    gpu::GpuEntry,
     HISTORY_LEN,
 };
+
+#[cfg(target_os = "linux")]
+use crate::metrics::gpu::amd;
+
+#[cfg(target_os = "windows")]
+use crate::metrics::gpu::windows_amd;
 
 // ── GpuEntry::new ────────────────────────────────────────────────────────────
 
@@ -70,12 +77,13 @@ fn test_gpu_entry_new_history_lengths_and_zeroed() {
     assert!(entry.mem_history.iter().all(|&v| v == 0.0));
 }
 
-// ── amd::refresh ─────────────────────────────────────────────────────────────
+// ── amd::refresh (Linux) ─────────────────────────────────────────────────────
 
 /// `amd::refresh` must not panic regardless of whether an AMD GPU is present.
 /// On machines without amdgpu the function returns early after failing to find
 /// `/sys/class/drm/card*/device/gpu_busy_percent`.
 #[test]
+#[cfg(target_os = "linux")]
 fn test_amd_refresh_does_not_panic() {
     let mut gpus: Vec<GpuEntry> = Vec::new();
     amd::refresh(&mut gpus);
@@ -85,6 +93,7 @@ fn test_amd_refresh_does_not_panic() {
 /// If `amd::refresh` finds GPU entries, each must satisfy the
 /// `used ≤ total` invariant for VRAM.
 #[test]
+#[cfg(target_os = "linux")]
 fn test_amd_refresh_mem_used_lte_total() {
     let mut gpus: Vec<GpuEntry> = Vec::new();
     amd::refresh(&mut gpus);
@@ -102,6 +111,7 @@ fn test_amd_refresh_mem_used_lte_total() {
 /// If `amd::refresh` finds GPU entries, their utilisation values must lie in
 /// the range 0.0–100.0 %.
 #[test]
+#[cfg(target_os = "linux")]
 fn test_amd_refresh_utilization_in_valid_range() {
     let mut gpus: Vec<GpuEntry> = Vec::new();
     amd::refresh(&mut gpus);
@@ -111,6 +121,74 @@ fn test_amd_refresh_utilization_in_valid_range() {
             "GPU '{}' utilization {} is outside [0, 100]",
             gpu.name,
             gpu.utilization
+        );
+    }
+}
+
+// ── windows_amd::refresh (Windows) ───────────────────────────────────────────
+
+/// `windows_amd::refresh` must not panic regardless of whether an AMD GPU is
+/// present. On machines without AMD hardware the function returns early after
+/// finding no matching DXGI adapters.
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_amd_refresh_does_not_panic() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_amd::refresh(&mut gpus);
+    // Just verify no panic; GPU presence is not guaranteed in CI.
+}
+
+/// If `windows_amd::refresh` finds GPU entries, each must satisfy the
+/// `used ≤ total` invariant for VRAM.
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_amd_refresh_mem_used_lte_total() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_amd::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            gpu.mem_used <= gpu.mem_total,
+            "GPU '{}' mem_used ({}) > mem_total ({})",
+            gpu.name,
+            gpu.mem_used,
+            gpu.mem_total
+        );
+    }
+}
+
+/// `windows_amd::refresh` reports utilisation as 0.0 (DXGI does not expose
+/// engine load without ADL).
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_amd_refresh_utilization_is_zero() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_amd::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert_eq!(
+            gpu.utilization, 0.0,
+            "GPU '{}' utilization should be 0.0 on Windows (DXGI limitation)",
+            gpu.name
+        );
+    }
+}
+
+/// `windows_amd::refresh` leaves temperature and power as `None` (DXGI does
+/// not expose those without ADL).
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_amd_refresh_optional_sensors_are_none() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_amd::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            gpu.temperature.is_none(),
+            "GPU '{}' temperature should be None on Windows",
+            gpu.name
+        );
+        assert!(
+            gpu.power_watts.is_none(),
+            "GPU '{}' power_watts should be None on Windows",
+            gpu.name
         );
     }
 }

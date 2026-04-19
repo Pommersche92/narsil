@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Narsil — The Blade Reforged</title>
-  <meta name="description" content="narsil — A terminal-based system resource monitor for Linux, Windows and macOS. GPU-aware (Linux), Braille charts, per-character label inversion. Written in Rust." />
+  <meta name="description" content="narsil — A terminal-based system resource monitor for Linux, Windows and macOS. GPU-aware (Linux &amp; Windows), Braille charts, per-character label inversion. Written in Rust." />
   <link rel="canonical" href="https://pommersche92.github.io/narsil/" />
   <meta property="og:title"       content="narsil — The Blade Reforged" />
   <meta property="og:description" content="A terminal system monitor sharper than the tools that came before it." />
@@ -75,7 +75,7 @@
   <div class="hero-badges">
     <span class="badge">🦀 Rust</span>
     <span class="badge">ratatui</span>
-    <span class="badge">AMD + NVIDIA GPU (Linux)</span>
+    <span class="badge">AMD + NVIDIA GPU (Linux &amp; Windows)</span>
     <span class="badge">Linux &middot; Windows &middot; macOS</span>
     <span class="badge">🌍 EN &middot; DE &middot; FR &middot; ES</span>
     <span class="badge">GPL-3.0</span>
@@ -92,7 +92,7 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">What Narsil Sees</p>
       <h2 class="s-title">Seven Views. One Kingdom.</h2>
-      <p class="s-desc">Every metric your system holds, rendered in Braille and flame — without ever leaving the terminal. Runs on Linux, Windows and macOS. GPU monitoring is Linux-only for now.</p>
+      <p class="s-desc">Every metric your system holds, rendered in Braille and flame — without ever leaving the terminal. Runs on Linux, Windows and macOS. GPU monitoring is supported on Linux and Windows.</p>
     </div>
 
     <div class="features-grid">
@@ -147,8 +147,8 @@
 
       <div class="feat-card fade-in-up">
         <span class="feat-icon">🎮</span>
-        <h3 class="feat-title">GPU <span style="font-size:.7em;opacity:.7">(Linux)</span></h3>
-        <p class="feat-desc">Per-GPU cards with utilisation and VRAM history charts, live gauges, temperature, and power draw. AMD and NVIDIA fully supported. GPU monitoring requires Linux with the <code>amdgpu</code> or NVIDIA proprietary driver.</p>
+        <h3 class="feat-title">GPU <span style="font-size:.7em;opacity:.7">(Linux &amp; Windows)</span></h3>
+        <p class="feat-desc">Per-GPU cards with utilisation and VRAM history charts, live gauges, temperature, and power draw. AMD and NVIDIA supported on Linux; AMD (DXGI) and NVIDIA (NVML) on Windows. Linux requires the <code>amdgpu</code> or NVIDIA proprietary driver.</p>
         <span class="feat-tag">AMD ✓&nbsp;&nbsp;NVIDIA ✓</span>
       </div>
 
@@ -183,7 +183,7 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">Forge Your Blade</p>
       <h2 class="s-title">Installation</h2>
-      <p class="s-desc">Runs on <strong>Linux</strong>, <strong>Windows 10+</strong>, and <strong>macOS 12+</strong>. Rust is only needed for the crates.io and source options. GPU support requires Linux.</p>
+      <p class="s-desc">Runs on <strong>Linux</strong>, <strong>Windows 10+</strong>, and <strong>macOS 12+</strong>. Rust is only needed for the crates.io and source options. GPU support requires Linux or Windows.</p>
     </div>
 
     <div class="channels-grid fade-in-up">
@@ -320,7 +320,7 @@
           Download <code>narsil-{version}-x86_64-windows.zip</code> from
           <a href="https://github.com/Pommersche92/narsil/releases/latest" target="_blank" rel="noopener">GitHub Releases ↗</a>.
           A NVIDIA variant (<code>narsil-nvidia-…-windows.zip</code>) is also provided.<br><br>
-          The GPU tab is not compiled into the Windows build. All other tabs work normally.
+          The GPU tab is compiled into the Windows build and supports AMD GPUs via DXGI and NVIDIA GPUs via NVML (<code>--features nvidia</code>).
         </div>
       </div>
 
@@ -363,7 +363,7 @@
 
       <!-- nvidia -->
       <div class="tab-panel" id="tab-nvidia">
-        <p class="tab-intro">Enable NVIDIA GPU monitoring via NVML. Requires proprietary NVIDIA drivers at link time. Linux only.</p>
+        <p class="tab-intro">Enable NVIDIA GPU monitoring via NVML. Requires proprietary NVIDIA drivers at link time. Supported on Linux and Windows.</p>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this, 'cargo install narsil --features nvidia')">copy</button>
           <div class="code-block">
@@ -401,7 +401,7 @@
     <div class="s-header fade-in-up">
       <p class="s-eyebrow">The Stewards of Silicon</p>
       <h2 class="s-title">GPU Support</h2>
-      <p class="s-desc">GPU monitoring is <strong>Linux-only</strong> — narsil reads deep into the kernel’s sysfs and NVML to bring you real GPU metrics. On Windows and macOS the GPU tab is not compiled in; all other tabs work normally.</p>
+      <p class="s-desc">GPU monitoring is supported on <strong>Linux and Windows</strong>. On Linux, narsil reads deep into the kernel’s sysfs and NVML. On Windows, AMD GPUs are queried via DXGI and NVIDIA via NVML. On macOS the GPU tab is not compiled in; all other tabs work normally.</p>
     </div>
 
     <div class="gpu-grid">
@@ -409,7 +409,7 @@
       <div class="gpu-card ok fade-in-up">
         <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD Discrete"></div>
         <div class="gpu-name">AMD Discrete</div>
-        <div class="gpu-driver">amdgpu kernel driver</div>
+        <div class="gpu-driver">amdgpu kernel driver (Linux)</div>
         <div class="chips">
           <span class="chip ok">Utilisation</span>
           <span class="chip ok">VRAM</span>
@@ -422,7 +422,7 @@
       <div class="gpu-card ok fade-in-up">
         <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD APU / iGPU"></div>
         <div class="gpu-name">AMD APU / iGPU</div>
-        <div class="gpu-driver">amdgpu kernel driver</div>
+        <div class="gpu-driver">amdgpu kernel driver (Linux)</div>
         <div class="chips">
           <span class="chip ok">Utilisation</span>
           <span class="chip ok">GTT Memory</span>
@@ -433,9 +433,22 @@
       </div>
 
       <div class="gpu-card ok fade-in-up">
+        <div class="gpu-vendor"><img src="assets/amd-48.png" alt="AMD (Windows)"></div>
+        <div class="gpu-name">AMD Discrete</div>
+        <div class="gpu-driver">DXGI 1.4 (Windows)</div>
+        <div class="chips">
+          <span class="chip none">Utilisation</span>
+          <span class="chip ok">VRAM</span>
+          <span class="chip none">Temperature</span>
+          <span class="chip none">Power</span>
+        </div>
+        <span class="gpu-label ok">Partial Support</span>
+      </div>
+
+      <div class="gpu-card ok fade-in-up">
         <div class="gpu-vendor"><img src="assets/nvidia-48.png" alt="NVIDIA"></div>
         <div class="gpu-name">NVIDIA</div>
-        <div class="gpu-driver">proprietary + --features nvidia</div>
+        <div class="gpu-driver">proprietary + --features nvidia (Linux &amp; Windows)</div>
         <div class="chips">
           <span class="chip ok">Utilisation</span>
           <span class="chip ok">VRAM</span>
@@ -460,9 +473,10 @@
 
     </div>
 
-    <p class="gpu-footnote fade-in-up">
-      AMD APU memory figures reflect GTT — system RAM dynamically shared with the GPU. narsil detects this automatically and labels the memory panel <strong>GTT</strong> instead of VRAM.
-    </p>
+      <p class="gpu-footnote fade-in-up">
+        AMD APU memory figures reflect GTT — system RAM dynamically shared with the GPU. narsil detects this automatically and labels the memory panel <strong>GTT</strong> instead of VRAM.<br>
+        On Windows, AMD GPU utilisation, temperature, and power are not available via DXGI; only VRAM budget and usage are reported.
+      </p>
 
   </div>
 </section>
@@ -488,7 +502,7 @@
       <div class="key-row"><kbd>Tab</kbd>         <span class="key-desc">Next tab (wraps around)</span></div>
       <div class="key-row"><kbd>Shift+Tab</kbd>   <span class="key-desc">Previous tab</span></div>
       <div class="key-row"><kbd>1</kbd>–<kbd>6</kbd> <span class="key-desc">Jump directly to tab (all platforms)</span></div>
-      <div class="key-row"><kbd>7</kbd> <span class="key-desc">Jump to GPU tab (Linux only)</span></div>
+      <div class="key-row"><kbd>7</kbd> <span class="key-desc">Jump to GPU tab (Linux &amp; Windows)</span></div>
       <div class="key-row"><kbd>→</kbd> / <kbd>l</kbd> <span class="key-desc">Next tab</span></div>
       <div class="key-row"><kbd>←</kbd> / <kbd>h</kbd> <span class="key-desc">Previous tab</span></div>
       <div class="key-row"><kbd>↓</kbd> / <kbd>j</kbd> <span class="key-desc">Scroll down</span></div>
@@ -587,7 +601,7 @@
           <tr>
             <td>GPU metrics</td>
             <td class="crss">✗</td><td class="crss">✗</td><td class="part">partial</td>
-            <td class="chk">AMD + NVIDIA (Linux)</td>
+            <td class="chk">AMD + NVIDIA (Linux &amp; Windows)</td>
           </tr>
           <tr>
             <td>Braille charts</td>

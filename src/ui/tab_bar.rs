@@ -33,7 +33,7 @@ use crate::app::App;
 pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let t = &app.t;
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     let titles_raw = vec![
         format!("{} [1]", t.tab_overview),
         format!("{} [2]", t.tab_cpu),
@@ -44,7 +44,7 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
         format!("{} [7]", t.tab_gpu),
     ];
 
-    #[cfg(not(target_os = "linux"))]
+    #[cfg(not(any(target_os = "linux", target_os = "windows")))]
     let titles_raw = vec![
         format!("{} [1]", t.tab_overview),
         format!("{} [2]", t.tab_cpu),

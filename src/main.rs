@@ -48,10 +48,10 @@ use ratatui::{Terminal, backend::CrosstermBackend};
 use app::App;
 use i18n::detect_lang_code;
 
-/// Number of tabs: 7 on Linux (includes GPU), 6 on other platforms.
-#[cfg(target_os = "linux")]
+/// Number of tabs: 7 on Linux/Windows (includes GPU), 6 on other platforms.
+#[cfg(any(target_os = "linux", target_os = "windows"))]
 const TAB_COUNT: usize = 7;
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
 const TAB_COUNT: usize = 6;
 
 /// Default refresh interval in milliseconds.
@@ -197,7 +197,7 @@ where
                                 app.process_scroll = (app.process_scroll + 1)
                                     .min(app.processes.len().saturating_sub(1));
                             }
-                            #[cfg(target_os = "linux")]
+                            #[cfg(any(target_os = "linux", target_os = "windows"))]
                             6 => {
                                 app.gpu_scroll = (app.gpu_scroll + 1)
                                     .min(app.gpus.len().saturating_sub(1));
@@ -213,7 +213,7 @@ where
                             5 => {
                                 app.process_scroll = app.process_scroll.saturating_sub(1);
                             }
-                            #[cfg(target_os = "linux")]
+                            #[cfg(any(target_os = "linux", target_os = "windows"))]
                             6 => {
                                 app.gpu_scroll = app.gpu_scroll.saturating_sub(1);
                             }
@@ -226,7 +226,7 @@ where
                     (KeyCode::Char('4'), _) => app.selected_tab = 3,
                     (KeyCode::Char('5'), _) => app.selected_tab = 4,
                     (KeyCode::Char('6'), _) => app.selected_tab = 5,
-                    #[cfg(target_os = "linux")]
+                    #[cfg(any(target_os = "linux", target_os = "windows"))]
                     (KeyCode::Char('7'), _) => app.selected_tab = 6,
                     _ => {}
                 }

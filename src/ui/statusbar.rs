@@ -42,16 +42,16 @@ pub fn draw(frame: &mut Frame, app: &App, area: Rect) {
     let mut bindings: Vec<(&str, &str)> = vec![
         ("Tab / → / l", t.nav_right.as_str()),
         ("Shift+Tab / ← / h", t.nav_left.as_str()),
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "linux", target_os = "windows"))]
         ("1-7", t.jump_to_tab.as_str()),
-        #[cfg(not(target_os = "linux"))]
+        #[cfg(not(any(target_os = "linux", target_os = "windows")))]
         ("1-6", t.jump_to_tab.as_str()),
         ("q / Ctrl-C", t.quit.as_str()),
     ];
 
-    #[cfg(target_os = "linux")]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     let scrollable_tab = matches!(app.selected_tab, 4 | 5 | 6);
-    #[cfg(not(target_os = "linux"))]
+    #[cfg(not(any(target_os = "linux", target_os = "windows")))]
     let scrollable_tab = matches!(app.selected_tab, 4 | 5);
     if scrollable_tab {
         bindings.extend_from_slice(&[("↑ / k", t.scroll_up.as_str()), ("↓ / j", t.scroll_down.as_str())]);

@@ -24,7 +24,7 @@ pub mod disks;
 pub mod memory;
 pub mod network;
 pub mod processes;
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "windows"))]
 pub mod gpu;
 
 pub use cpu::CpuState;
@@ -32,7 +32,7 @@ pub use disks::DiskState;
 pub use memory::MemState;
 pub use network::NetState;
 pub use processes::ProcessEntry;
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "windows"))]
 pub use gpu::GpuEntry;
 
 /// Number of samples retained in each rolling history buffer.

@@ -7,7 +7,7 @@
 
 Named after the reforged sword of Aragorn, **narsil** is built to be sharper than the tools that came before it. It targets developers and power users who live in the terminal and need real-time system insight without leaving it.
 
-> **Platform support** — narsil runs on **Linux**, **Windows**, and **macOS**. The GPU tab (AMD/NVIDIA) is Linux-only for now; all other tabs work on every supported OS.
+> **Platform support** — narsil runs on **Linux**, **Windows**, and **macOS**. The GPU tab (AMD/NVIDIA) is supported on Linux and Windows; all other tabs work on every supported OS.
 
 ---
 
@@ -29,7 +29,7 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 | 🌐 **Network** | Combined RX/TX history chart, per-direction current throughput | all |
 | 💿 **Disks** | Per-partition usage bars at fixed height, scrollable when partitions exceed the terminal | all |
 | 🔬 **Processes** | Process table sorted by CPU, scrollable, fills available height | all |
-| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw | **Linux only** |
+| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw | **Linux, Windows** |
 
 ### 🔑 Key behaviours
 
@@ -47,7 +47,7 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 ### Prerequisites
 
 - **Linux**, **Windows 10+**, or **macOS 12+**
-- GPU tab requires Linux with standard `/sys` mounts and `amdgpu` (AMD) or NVIDIA proprietary drivers
+- GPU tab requires Linux or Windows; on Linux with `/sys` mounts and `amdgpu` (AMD) or NVIDIA proprietary drivers; on Windows with any DXGI-capable AMD driver or NVIDIA proprietary drivers
 - Rust toolchain ≥ 1.85 — needed only for `cargo install` or source builds (`rustup update stable`)
 
 ### Official release channels
@@ -67,7 +67,7 @@ AppImage, Windows zip, and Linux tarball are attached to every [GitHub release](
 
 ```bash
 cargo install narsil                      # standard
-cargo install narsil --features nvidia    # with NVIDIA GPU support (Linux only)
+cargo install narsil --features nvidia    # with NVIDIA GPU support (Linux and Windows)
 ```
 
 ### AUR (Arch Linux)
@@ -103,7 +103,7 @@ Two variants per release: `narsil-{version}-x86_64.AppImage` (standard) and `nar
 
 Download `narsil-{version}-x86_64-windows.zip` or `narsil-nvidia-{version}-x86_64-windows.zip` from the [latest GitHub release](https://github.com/Pommersche92/narsil/releases/latest), extract, and run `narsil.exe` in PowerShell or cmd.
 
-> The GPU tab is not compiled into the Windows build.
+> The GPU tab is compiled into the Windows build and supports AMD GPUs via DXGI and NVIDIA GPUs via NVML (`--features nvidia`).
 
 ### Linux tarball (x86_64)
 
@@ -125,7 +125,7 @@ cargo build --release
 ./target/release/narsil        # Linux / macOS
 .\target\release\narsil.exe    # Windows
 
-# With NVIDIA GPU support (Linux only):
+# With NVIDIA GPU support (Linux and Windows):
 cargo build --release --features nvidia
 ```
 
@@ -133,15 +133,16 @@ cargo build --release --features nvidia
 
 ## 🎮 GPU support matrix
 
-> GPU monitoring is **Linux-only**. On Windows and macOS the GPU tab is not compiled in; all other tabs work normally.
+> GPU monitoring is supported on **Linux** and **Windows**. On macOS the GPU tab is not compiled in; all other tabs work normally.
 
-| Vendor | Driver | Detected | Utilisation | Memory | Temperature | Power |
-|--------|--------|----------|-------------|--------|-------------|-------|
-| 🔴 AMD discrete | `amdgpu` | ✅ | ✅ `gpu_busy_percent` | ✅ VRAM | ✅ hwmon | ✅ hwmon |
-| 🔴 AMD iGPU (APU) | `amdgpu` | ✅ | ✅ | ✅ GTT (shared RAM) | ✅ | ✅ |
-| 🟢 NVIDIA | proprietary + `--features nvidia` | ✅ | ✅ NVML | ✅ NVML | ✅ NVML | ✅ NVML |
-| 🔵 Intel iGPU | `i915` / `xe` | ❌ | — | — | — | — |
-| 🔵 Intel Arc discrete | `xe` | ❌ | — | — | — | — |
+| Vendor | Driver / API | OS | Detected | Utilisation | Memory | Temperature | Power |
+|--------|-------------|-----|----------|-------------|--------|-------------|-------|
+| 🔴 AMD discrete | `amdgpu` sysfs | Linux | ✅ | ✅ `gpu_busy_percent` | ✅ VRAM | ✅ hwmon | ✅ hwmon |
+| 🔴 AMD iGPU (APU) | `amdgpu` sysfs | Linux | ✅ | ✅ | ✅ GTT (shared RAM) | ✅ | ✅ |
+| 🔴 AMD discrete | DXGI 1.4 | Windows | ✅ | ❌ | ✅ VRAM budget | ❌ | ❌ |
+| 🟢 NVIDIA | proprietary + `--features nvidia` | Linux, Windows | ✅ | ✅ NVML | ✅ NVML | ✅ NVML | ✅ NVML |
+| 🔵 Intel iGPU | `i915` / `xe` | Linux | ❌ | — | — | — | — |
+| 🔵 Intel Arc discrete | `xe` | Linux | ❌ | — | — | — | — |
 
 > ✅ **AMD APU note**: VRAM figures for APUs reflect GTT memory (system RAM dynamically assigned to the GPU). narsil detects this automatically and labels the memory panel **GTT** rather than VRAM.
 
@@ -155,10 +156,10 @@ cargo build --release --features nvidia
 |-----|--------|----------|
 | `Tab` / `Shift+Tab` | Next / previous tab (wraps around) | all |
 | `1` – `6` | Jump directly to tab | all |
-| `7` | Jump to GPU tab | Linux only |
+| `7` | Jump to GPU tab | Linux, Windows |
 | `→` / `l` | Next tab | all |
 | `←` / `h` | Previous tab | all |
-| `↓` / `j` | Scroll down (Disks, Processes; + GPU on Linux) | all |
+| `↓` / `j` | Scroll down (Disks, Processes; + GPU on Linux/Windows) | all |
 | `↑` / `k` | Scroll up | all |
 | `q` / `Ctrl-C` | Quit | all |
 
@@ -209,7 +210,8 @@ src/
 │   ├── processes.rs      — ProcessEntry, top-100 by CPU
 │   └── gpu/
 │       ├── mod.rs        — GpuEntry, vendor dispatch
-│       ├── amd.rs        — sysfs-based AMD metrics
+        └── amd.rs        — sysfs-based AMD metrics (Linux)
+        ├── windows_amd.rs — DXGI-based AMD metrics (Windows)
 │       └── nvidia.rs     — NVML-based NVIDIA metrics (feature-gated)
 └── ui/
     ├── mod.rs            — draw() entry point
@@ -257,7 +259,7 @@ cargo test
 | `tests::network` | `NetState::new` zeroed state; `refresh` history cap & rate consistency |
 | `tests::disks` | `DiskState` field storage; `refresh` non-empty result, `used ≤ total`, non-empty names/mounts |
 | `tests::processes` | `ProcessEntry` field storage; `refresh` ≤ 100 entries, CPU-descending sort, non-empty names |
-| `tests::gpu` | `GpuEntry::new` zeroed fields, `mem_is_gtt` initial value, history lengths; `amd::refresh` smoke test & invariants | Linux only |
+| `tests::gpu` | `GpuEntry::new` zeroed fields, `mem_is_gtt` initial value, history lengths; `amd::refresh` smoke test & invariants | Linux, Windows |
 | `tests::split_gauge` | Ratio clamping, full/empty/half fill, label centring, block inner area, zero-size no-panic |
 | `tests::i18n` | `primary_code` subtag parsing, `is_bundled` case-insensitive lookup, `get_translations` for all 4 locales + region qualifiers + unknown fallback, all fields non-empty, parse no-panic, `detect_lang_code` smoke test |
 
@@ -278,6 +280,7 @@ cargo test --features nvidia
 | `sysinfo` | CPU, RAM, swap, network, disk, process data |
 | `anyhow` | Ergonomic error handling |
 | `nvml-wrapper` *(optional)* | NVIDIA GPU metrics via NVML |
+| `windows` *(Windows only)* | AMD GPU metrics via DXGI |
 
 ---
 

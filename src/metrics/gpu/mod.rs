@@ -19,7 +19,11 @@
 //! [`amd`] sub-module (via sysfs) and, when the `nvidia` feature is enabled,
 //! by the `nvidia` sub-module (via NVML).
 
+#[cfg(target_os = "linux")]
 pub mod amd;
+
+#[cfg(target_os = "windows")]
+pub mod windows_amd;
 
 #[cfg(feature = "nvidia")]
 pub mod nvidia;
