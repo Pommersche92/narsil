@@ -19,7 +19,9 @@
 //! history vector dimensions. Also contains smoke tests for the platform-
 //! specific refresh backends:
 //! - [`crate::metrics::gpu::amd::refresh`] on Linux (no AMD hardware required)
+//! - [`crate::metrics::gpu::intel::refresh`] on Linux (no Intel hardware required)
 //! - [`crate::metrics::gpu::windows_amd::refresh`] on Windows (no AMD hardware required)
+//! - [`crate::metrics::gpu::windows_intel::refresh`] on Windows (no Intel hardware required)
 
 use crate::metrics::{
     gpu::GpuEntry,
@@ -29,8 +31,14 @@ use crate::metrics::{
 #[cfg(target_os = "linux")]
 use crate::metrics::gpu::amd;
 
+#[cfg(target_os = "linux")]
+use crate::metrics::gpu::intel;
+
 #[cfg(target_os = "windows")]
 use crate::metrics::gpu::windows_amd;
+
+#[cfg(target_os = "windows")]
+use crate::metrics::gpu::windows_intel;
 
 // ── GpuEntry::new ────────────────────────────────────────────────────────────
 
@@ -179,6 +187,122 @@ fn test_windows_amd_refresh_utilization_is_zero() {
 fn test_windows_amd_refresh_optional_sensors_are_none() {
     let mut gpus: Vec<GpuEntry> = Vec::new();
     windows_amd::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            gpu.temperature.is_none(),
+            "GPU '{}' temperature should be None on Windows",
+            gpu.name
+        );
+        assert!(
+            gpu.power_watts.is_none(),
+            "GPU '{}' power_watts should be None on Windows",
+            gpu.name
+        );
+    }
+}
+
+// ── intel::refresh (Linux) ───────────────────────────────────────────────────
+
+/// `intel::refresh` must not panic regardless of whether an Intel GPU is present.
+/// On machines without i915/xe the function returns early after failing to find
+/// Intel GPU cards.
+#[test]
+#[cfg(target_os = "linux")]
+fn test_intel_refresh_does_not_panic() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    intel::refresh(&mut gpus);
+    // Just verify no panic; GPU presence is not guaranteed in CI.
+}
+
+/// If `intel::refresh` finds GPU entries, each must satisfy the
+/// `used ≤ total` invariant for memory.
+#[test]
+#[cfg(target_os = "linux")]
+fn test_intel_refresh_mem_used_lte_total() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    intel::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            gpu.mem_used <= gpu.mem_total,
+            "GPU '{}' mem_used ({}) > mem_total ({})",
+            gpu.name,
+            gpu.mem_used,
+            gpu.mem_total
+        );
+    }
+}
+
+/// If `intel::refresh` finds GPU entries, their utilisation values must lie in
+/// the range 0.0–100.0 %.
+#[test]
+#[cfg(target_os = "linux")]
+fn test_intel_refresh_utilization_in_valid_range() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    intel::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            (0.0..=100.0).contains(&gpu.utilization),
+            "GPU '{}' utilization {} is outside [0, 100]",
+            gpu.name,
+            gpu.utilization
+        );
+    }
+}
+
+// ── windows_intel::refresh (Windows) ──────────────────────────────────────────
+
+/// `windows_intel::refresh` must not panic regardless of whether an Intel GPU is
+/// present. On machines without Intel hardware the function returns early after
+/// finding no matching DXGI adapters.
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_intel_refresh_does_not_panic() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_intel::refresh(&mut gpus);
+    // Just verify no panic; GPU presence is not guaranteed in CI.
+}
+
+/// If `windows_intel::refresh` finds GPU entries, each must satisfy the
+/// `used ≤ total` invariant for VRAM.
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_intel_refresh_mem_used_lte_total() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_intel::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert!(
+            gpu.mem_used <= gpu.mem_total,
+            "GPU '{}' mem_used ({}) > mem_total ({})",
+            gpu.name,
+            gpu.mem_used,
+            gpu.mem_total
+        );
+    }
+}
+
+/// `windows_intel::refresh` reports utilisation as 0.0 (DXGI does not expose
+/// engine load without Intel tools).
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_intel_refresh_utilization_is_zero() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_intel::refresh(&mut gpus);
+    for gpu in &gpus {
+        assert_eq!(
+            gpu.utilization, 0.0,
+            "GPU '{}' utilization should be 0.0 on Windows (DXGI limitation)",
+            gpu.name
+        );
+    }
+}
+
+/// `windows_intel::refresh` leaves temperature and power as `None` (DXGI does
+/// not expose those without Intel tools).
+#[test]
+#[cfg(target_os = "windows")]
+fn test_windows_intel_refresh_optional_sensors_are_none() {
+    let mut gpus: Vec<GpuEntry> = Vec::new();
+    windows_intel::refresh(&mut gpus);
     for gpu in &gpus {
         assert!(
             gpu.temperature.is_none(),

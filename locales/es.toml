@@ -51,7 +51,7 @@ col_cpu_pct     = "CPU %"
 col_mem_kib     = "Mem. (KiB)"
 
 # ── Pestaña GPU ───────────────────────────────────────────────────────────────
-gpu_no_device = "No se detectó GPU compatible.\n• AMD:    requiere el controlador del kernel amdgpu\n• NVIDIA: recompile con: cargo build --features nvidia"
+gpu_no_device = "No se detectó GPU compatible.\n• AMD:    requiere el controlador del kernel amdgpu\n• NVIDIA: recompile con: cargo build --features nvidia\n• Intel:  requiere el controlador del kernel i915 o xe"
 gpu_util  = "Util."
 gpu_vram  = "VRAM"
 gpu_gtt   = "GTT"

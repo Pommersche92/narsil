@@ -26,10 +26,13 @@ use crate::metrics::push_history;
 /// Scans `/sys/class/drm` for `amdgpu`-managed cards, re-initialises the
 /// `gpus` list when the card count changes, and updates each entry with fresh
 /// GPU busy percent, VRAM usage, temperature, and power draw.
-pub fn refresh(gpus: &mut Vec<GpuEntry>) {
+///
+/// Returns `true` when at least one AMD GPU was found and updated, allowing
+/// the caller to skip the Intel fallback path.
+pub fn refresh(gpus: &mut Vec<GpuEntry>) -> bool {
     let drm = Path::new("/sys/class/drm");
     if !drm.exists() {
-        return;
+        return false;
     }
 
     let mut card_paths: Vec<_> = match fs::read_dir(drm) {
@@ -43,12 +46,12 @@ pub fn refresh(gpus: &mut Vec<GpuEntry>) {
             .map(|e| e.path())
             .filter(|p| p.join("device/gpu_busy_percent").exists())
             .collect(),
-        Err(_) => return,
+        Err(_) => return false,
     };
     card_paths.sort();
 
     if card_paths.is_empty() {
-        return;
+        return false;
     }
 
     if gpus.len() != card_paths.len() {
@@ -109,6 +112,7 @@ pub fn refresh(gpus: &mut Vec<GpuEntry>) {
         };
         push_history(&mut gpu.mem_history, mem_pct);
     }
+    true
 }
 
 fn gpu_name(card_path: &Path) -> String {

@@ -51,7 +51,7 @@ col_cpu_pct     = "CPU %"
 col_mem_kib     = "Mem (KiB)"
 
 # ── GPU tab ───────────────────────────────────────────────────────────────────
-gpu_no_device = "No compatible GPU detected.\n• AMD:    requires amdgpu kernel driver\n• NVIDIA: rebuild with: cargo build --features nvidia"
+gpu_no_device = "No compatible GPU detected.\n• AMD:    requires amdgpu kernel driver\n• NVIDIA: rebuild with: cargo build --features nvidia\n• Intel:  requires i915 or xe kernel driver"
 gpu_util  = "Util"
 gpu_vram  = "VRAM"
 gpu_gtt   = "GTT"

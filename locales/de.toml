@@ -51,7 +51,7 @@ col_cpu_pct     = "CPU %"
 col_mem_kib     = "Speicher (KiB)"
 
 # ── GPU-Tab ───────────────────────────────────────────────────────────────────
-gpu_no_device = "Keine kompatible GPU erkannt.\n• AMD:    erfordert amdgpu-Kerneltreiber\n• NVIDIA: mit Option neu bauen: cargo build --features nvidia"
+gpu_no_device = "Keine kompatible GPU erkannt.\n• AMD:    erfordert amdgpu-Kerneltreiber\n• NVIDIA: mit Option neu bauen: cargo build --features nvidia\n• Intel:  erfordert i915 oder xe-Kerneltreiber"
 gpu_util  = "Auslast."
 gpu_vram  = "VRAM"
 gpu_gtt   = "GTT"

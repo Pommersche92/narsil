@@ -51,7 +51,7 @@ col_cpu_pct     = "CPU %"
 col_mem_kib     = "Mém. (Kio)"
 
 # ── Onglet GPU ────────────────────────────────────────────────────────────────
-gpu_no_device = "Aucun GPU compatible détecté.\n• AMD :    nécessite le pilote noyau amdgpu\n• NVIDIA : recompilez avec : cargo build --features nvidia"
+gpu_no_device = "Aucun GPU compatible détecté.\n• AMD :    nécessite le pilote noyau amdgpu\n• NVIDIA : recompilez avec : cargo build --features nvidia\n• Intel :  nécessite le pilote noyau i915 ou xe"
 gpu_util  = "Util."
 gpu_vram  = "VRAM"
 gpu_gtt   = "GTT"

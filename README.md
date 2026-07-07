@@ -7,7 +7,6 @@
 
 Named after the reforged sword of Aragorn, **narsil** is built to be sharper than the tools that came before it. It targets developers and power users who live in the terminal and need real-time system insight without leaving it.
 
-> **Platform support** — narsil runs on **Linux**, **Windows**, and **macOS**. The GPU tab (AMD/NVIDIA) is supported on Linux and Windows; all other tabs work on every supported OS.
 
 ---
 
@@ -29,7 +28,7 @@ Named after the reforged sword of Aragorn, **narsil** is built to be sharper tha
 | 🌐 **Network** | Combined RX/TX history chart, per-direction current throughput | all |
 | 💿 **Disks** | Per-partition usage bars at fixed height, scrollable when partitions exceed the terminal | all |
 | 🔬 **Processes** | Process table sorted by CPU, scrollable, fills available height | all |
-| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw | **Linux, Windows** |
+| 🎮 **GPU** | Per-GPU cards with utilisation + VRAM history charts, gauges, temperature and power draw | **Linux, Windows, macOS** |
 
 ### 🔑 Key behaviours
 
@@ -133,7 +132,7 @@ cargo build --release --features nvidia
 
 ## 🎮 GPU support matrix
 
-> GPU monitoring is supported on **Linux** and **Windows**. On macOS the GPU tab is not compiled in; all other tabs work normally.
+> GPU monitoring is supported on **Linux**, **Windows**, and **macOS**. Intel iGPU support on macOS is limited.
 
 | Vendor | Driver / API | OS | Detected | Utilisation | Memory | Temperature | Power |
 |--------|-------------|-----|----------|-------------|--------|-------------|-------|
@@ -141,12 +140,13 @@ cargo build --release --features nvidia
 | 🔴 AMD iGPU (APU) | `amdgpu` sysfs | Linux | ✅ | ✅ | ✅ GTT (shared RAM) | ✅ | ✅ |
 | 🔴 AMD discrete | DXGI 1.4 | Windows | ✅ | ❌ | ✅ VRAM budget | ❌ | ❌ |
 | 🟢 NVIDIA | proprietary + `--features nvidia` | Linux, Windows | ✅ | ✅ NVML | ✅ NVML | ✅ NVML | ✅ NVML |
-| 🔵 Intel iGPU | `i915` / `xe` | Linux | ❌ | — | — | — | — |
-| 🔵 Intel Arc discrete | `xe` | Linux | ❌ | — | — | — | — |
+| 🔵 Intel iGPU | `i915` / `xe` sysfs | Linux | ✅ | ✅ GT frequency ratio | — | ✅ hwmon | ✅ hwmon |
+| 🔵 Intel Arc discrete | `xe` sysfs + LMEM | Linux | ✅ | ✅ GT frequency ratio | ✅ LMEM | ✅ hwmon | ✅ hwmon |
+| 🔵 Intel iGPU | DXGI 1.4 | Windows | ✅ | ❌ | ✅ VRAM budget | ❌ | ❌ |
+| 🔵 Intel iGPU | IOKit | macOS | ⚠️ | ❌ | ❌ | ❌ | ❌ |
 
 > ✅ **AMD APU note**: VRAM figures for APUs reflect GTT memory (system RAM dynamically assigned to the GPU). narsil detects this automatically and labels the memory panel **GTT** rather than VRAM.
 
-> 🗓️ **Intel note**: Intel GPU support is planned — see Roadmap below.
 
 ---
 
@@ -156,10 +156,10 @@ cargo build --release --features nvidia
 |-----|--------|----------|
 | `Tab` / `Shift+Tab` | Next / previous tab (wraps around) | all |
 | `1` – `6` | Jump directly to tab | all |
-| `7` | Jump to GPU tab | Linux, Windows |
+| `7` | Jump to GPU tab | Linux, Windows, macOS |
 | `→` / `l` | Next tab | all |
 | `←` / `h` | Previous tab | all |
-| `↓` / `j` | Scroll down (Disks, Processes; + GPU on Linux/Windows) | all |
+| `↓` / `j` | Scroll down (Disks, Processes; + GPU on Linux/Windows/macOS) | all |
 | `↑` / `k` | Scroll up | all |
 | `q` / `Ctrl-C` | Quit | all |
 
@@ -210,8 +210,10 @@ src/
 │   ├── processes.rs      — ProcessEntry, top-100 by CPU
 │   └── gpu/
 │       ├── mod.rs        — GpuEntry, vendor dispatch
-        └── amd.rs        — sysfs-based AMD metrics (Linux)
-        ├── windows_amd.rs — DXGI-based AMD metrics (Windows)
+│       ├── amd.rs        — sysfs-based AMD metrics (Linux)
+│       ├── intel.rs      — sysfs-based Intel metrics (Linux), DXGI (Windows), IOKit (macOS)
+│       ├── windows_amd.rs — DXGI-based AMD metrics (Windows)
+│       ├── windows_intel.rs — DXGI-based Intel metrics (Windows)
 │       └── nvidia.rs     — NVML-based NVIDIA metrics (feature-gated)
 └── ui/
     ├── mod.rs            — draw() entry point
@@ -259,7 +261,7 @@ cargo test
 | `tests::network` | `NetState::new` zeroed state; `refresh` history cap & rate consistency |
 | `tests::disks` | `DiskState` field storage; `refresh` non-empty result, `used ≤ total`, non-empty names/mounts |
 | `tests::processes` | `ProcessEntry` field storage; `refresh` ≤ 100 entries, CPU-descending sort, non-empty names |
-| `tests::gpu` | `GpuEntry::new` zeroed fields, `mem_is_gtt` initial value, history lengths; `amd::refresh` smoke test & invariants | Linux, Windows |
+| `tests::gpu` | `GpuEntry::new` zeroed fields, `mem_is_gtt` initial value, history lengths; `amd::refresh` and `intel::refresh` smoke tests & invariants | Linux, Windows |
 | `tests::split_gauge` | Ratio clamping, full/empty/half fill, label centring, block inner area, zero-size no-panic |
 | `tests::i18n` | `primary_code` subtag parsing, `is_bundled` case-insensitive lookup, `get_translations` for all 4 locales + region qualifiers + unknown fallback, all fields non-empty, parse no-panic, `detect_lang_code` smoke test |
 
@@ -290,10 +292,9 @@ Items are loosely ordered by priority.
 
 ### 🔜 Near-term
 
-- 🔵 **Intel GPU support** — utilisation via GT frequency ratio (`i915`/`xe` sysfs), LMEM for Intel Arc cards, temperature via hwmon; shown with appropriate caveats for iGPUs
+- ~~🔵 **Intel GPU support** — utilisation via GT frequency ratio (`i915`/`xe` sysfs), LMEM for Intel Arc cards, temperature via hwmon; shown with appropriate caveats for iGPUs~~ ✅
 - ~~🏷️ **AMD APU label fix** — distinguish GTT (shared) from dedicated VRAM and label accordingly~~ ✅
 - ~~⏱️ **Configurable refresh rate** — CLI flag `--interval <ms>` to tune between low-latency and low-CPU usage~~ ✅
-- 🎨 **Colour themes** — built-in dark/light/high-contrast theme switcher
 
 ### 🔧 Medium-term
 
@@ -321,7 +322,7 @@ Items are loosely ordered by priority.
 | Feature | `top` | `htop` | `gotop` | **narsil** |
 |---------|-------|--------|---------|-----------|
 | Language | C | C | Go | 🦀 **Rust** |
-| GPU metrics | ❌ | ❌ | partial | **✅ AMD + NVIDIA (Linux)** |
+| GPU metrics | ❌ | ❌ | partial | **✅ AMD + NVIDIA + Intel (Linux)** |
 | Braille charts | ❌ | ❌ | ✅ | **✅** |
 | Per-char label inversion | ❌ | ❌ | ❌ | **✅** |
 | Disk usage bars | ❌ | ❌ | ✅ | **✅** |

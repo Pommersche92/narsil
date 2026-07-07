@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-//! AMD GPU monitoring via DXGI on Windows.
+//! Intel GPU monitoring via DXGI on Windows.
 //!
-//! Uses [`IDXGIFactory1`] to enumerate AMD graphics adapters and
+//! Uses [`IDXGIFactory1`] to enumerate Intel graphics adapters and
 //! [`IDXGIAdapter3`] (DXGI 1.4, Windows 8.1+) to query dedicated video-memory
 //! budget and current usage.
 //!
 //! GPU utilisation, die temperature, and power draw are not exposed by any
-//! standard Windows API without the vendor-specific AMD ADL SDK; those fields
+//! standard Windows API without the vendor-specific Intel tools; those fields
 //! are left at their default "not available" values.
 
 use windows::{
@@ -34,17 +34,16 @@ use windows::{
 use super::GpuEntry;
 use crate::metrics::push_history;
 
-/// AMD PCI Vendor ID.
-const AMD_VENDOR_ID: u32 = 0x1002;
+/// Intel PCI Vendor ID.
+const INTEL_VENDOR_ID: u32 = 0x8086;
 
-/// Enumerates AMD DXGI adapters and updates `gpus` with fresh VRAM metrics.
+/// Enumerates Intel DXGI adapters and updates `gpus` with fresh VRAM metrics.
 ///
 /// Software / WARP adapters are skipped. GPU utilisation, temperature, and
 /// power are reported as unavailable (`0.0` / `None`) because Windows exposes
-/// no standard API for those values without ADL.
+/// no standard API for those values without Intel-specific tools.
 ///
-/// Returns `true` when at least one AMD GPU was found and updated, allowing
-/// the caller to skip the Intel fallback path.
+/// Returns `true` when at least one Intel GPU was found and updated.
 pub fn refresh(gpus: &mut Vec<GpuEntry>) -> bool {
     let factory: IDXGIFactory1 = match unsafe { CreateDXGIFactory1::<IDXGIFactory1>() } {
         Ok(f) => f,
@@ -71,7 +70,7 @@ pub fn refresh(gpus: &mut Vec<GpuEntry>) -> bool {
             continue;
         }
 
-        if desc.VendorId != AMD_VENDOR_ID {
+        if desc.VendorId != INTEL_VENDOR_ID {
             continue;
         }
 

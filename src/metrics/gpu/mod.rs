@@ -16,14 +16,24 @@
 //! GPU monitoring data types and vendor dispatch.
 //!
 //! [`GpuEntry`] is vendor-agnostic. Actual collection is performed by the
-//! [`amd`] sub-module (via sysfs) and, when the `nvidia` feature is enabled,
+//! [`amd`] sub-module (via sysfs), [`intel`] sub-module (via i915/xe sysfs on Linux,
+//! DXGI on Windows), and, when the `nvidia` feature is enabled,
 //! by the `nvidia` sub-module (via NVML).
 
 #[cfg(target_os = "linux")]
 pub mod amd;
 
+#[cfg(target_os = "linux")]
+pub mod intel;
+
 #[cfg(target_os = "windows")]
 pub mod windows_amd;
+
+#[cfg(target_os = "windows")]
+pub mod windows_intel;
+
+#[cfg(target_os = "macos")]
+pub mod macos_intel;
 
 #[cfg(feature = "nvidia")]
 pub mod nvidia;
