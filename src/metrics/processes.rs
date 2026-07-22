@@ -27,7 +27,7 @@ pub struct ProcessEntry {
     pub pid: u32,
     /// Process name as reported by the OS (may be truncated).
     pub name: String,
-    /// CPU usage percentage at the time of sampling (summed across all cores).
+    /// CPU usage percentage at the time of sampling (0–100 %, averaged across all cores).
     pub cpu: f32,
     /// Resident memory in kibibytes.
     pub mem_kb: u64,
@@ -35,14 +35,19 @@ pub struct ProcessEntry {
 
 /// Rebuilds `processes` from the current `sys` snapshot, sorts by CPU usage
 /// descending, and retains the top 100 entries.
+///
+/// CPU usage is normalised to a 0–100 % range by dividing the raw
+/// core‑aggregated value by the number of logical CPUs.
 pub fn refresh(processes: &mut Vec<ProcessEntry>, sys: &System) {
+    let num_cpus = sys.cpus().len().max(1) as f32;
+
     let mut procs: Vec<ProcessEntry> = sys
         .processes()
         .values()
         .map(|p| ProcessEntry {
             pid: p.pid().as_u32(),
             name: p.name().to_string_lossy().into_owned(),
-            cpu: p.cpu_usage(),
+            cpu: (p.cpu_usage() / num_cpus).min(100.0),
             mem_kb: p.memory() / 1024,
         })
         .collect();
