@@ -44,14 +44,19 @@ impl CpuState {
     }
 }
 
-/// Updates `state` with the current per-core usage values from `sys` and
-/// pushes a new sample into each rolling history buffer.
+/// Updates `state` with the current per-core usage values from `sys`.
+///
+/// Per‑core values are clamped to 0–100 %. The global average is computed
+/// from the clamped individual values so that it never exceeds 100 %
+/// regardless of how `sysinfo` reports the data.
 pub fn refresh(state: &mut CpuState, sys: &System) {
     let cpus = sys.cpus();
     let mut global_sum = 0.0_f32;
 
     for (i, cpu) in cpus.iter().enumerate() {
-        let usage = cpu.cpu_usage();
+        // Clamp to 0–100 in case the underlying value is a core‑aggregated
+        // figure (like per‑process cpu_usage).
+        let usage = cpu.cpu_usage().clamp(0.0, 100.0);
         global_sum += usage;
         if i < state.usages.len() {
             state.usages[i] = usage;
@@ -62,7 +67,7 @@ pub fn refresh(state: &mut CpuState, sys: &System) {
     let global = if cpus.is_empty() {
         0.0
     } else {
-        global_sum / cpus.len() as f32
+        (global_sum / cpus.len() as f32).clamp(0.0, 100.0)
     };
     push_history(&mut state.global_history, global);
 }
